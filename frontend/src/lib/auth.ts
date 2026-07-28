@@ -1,7 +1,23 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error(
+      "❌ JWT_SECRET environment variable is not set. " +
+      "Please add JWT_SECRET to your .env file with a minimum 32-character random string."
+    );
+  }
+  if (secret.length < 32) {
+    console.warn(
+      "⚠️  WARNING: JWT_SECRET is less than 32 characters. " +
+      "This is insecure. Please use a longer secret key."
+    );
+  }
+  return secret;
+}
+
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 
 export interface JwtPayload {
@@ -23,14 +39,16 @@ export async function verifyPassword(
 }
 
 export function generateToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, {
+  const secret = getJwtSecret();
+  return jwt.sign(payload, secret, {
     expiresIn: JWT_EXPIRES_IN as string,
   } as jwt.SignOptions);
 }
 
 export function verifyToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const secret = getJwtSecret();
+    return jwt.verify(token, secret) as JwtPayload;
   } catch {
     return null;
   }
