@@ -1,37 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { OrganizationSchema } from "@/components/json-ld";
 import { useI18n } from "@/context/I18nContext";
 
-const popularTours = [
-  { id: "1", slug: "isfahan-cultural-heritage", price: 320, rating: 4.9, reviews: 67 },
-  { id: "2", slug: "mount-damavand-expedition", price: 850, rating: 4.8, reviews: 45 },
-  { id: "3", slug: "hyrcanian-forest-adventure", price: 450, rating: 4.6, reviews: 38 },
-  { id: "4", slug: "shiraz-persepolis-discovery", price: 420, rating: 4.9, reviews: 83 },
-  { id: "5", slug: "lut-desert-adventure", price: 680, rating: 4.5, reviews: 22 },
-  { id: "6", slug: "masuleh-kandovan-villages", price: 520, rating: 4.7, reviews: 29 },
-];
+interface TourCard {
+  id: string; slug: string; title: string; titleFa: string; titleEn: string;
+  type: string; difficulty: string; durationDays: number; price: number;
+  averageRating: number; totalReviews: number; province: string; imageUrl: string | null;
+}
 
-const testimonials = [
-  { name: "John Smith", country: "United States", avatar: "JS", rating: 5, text: "An incredible experience! The guides were knowledgeable and passionate. Isfahan took my breath away.", tour: "Isfahan Cultural Tour" },
-  { name: "Maria Garcia", country: "Spain", avatar: "MG", rating: 5, text: "Summiting Damavand was the highlight of my life. The team took care of every detail. Highly recommended!", tour: "Mount Damavand Expedition" },
-  { name: "Ahmed Al-Rashid", country: "UAE", avatar: "AR", rating: 5, text: "The desert tour was magical. Sleeping under the stars and watching sunrise over the kaluts was unforgettable.", tour: "Lut Desert Adventure" },
-];
+interface Testimonial {
+  id: string; userName: string; comment: string; rating: number;
+  tourTitle: string; country: string | null;
+}
 
 const difficultyColors: Record<string, string> = {
-  Easy: "bg-green-100 text-green-700",
-  Moderate: "bg-yellow-100 text-yellow-700",
-  Hard: "bg-orange-100 text-orange-700",
-  "Very Hard": "bg-red-100 text-red-700",
+  EASY: "bg-green-100 text-green-700",
+  MODERATE: "bg-yellow-100 text-yellow-700",
+  HARD: "bg-orange-100 text-orange-700",
+  VERY_HARD: "bg-red-100 text-red-700",
+};
+
+const difficultyLabels: Record<string, string> = {
+  EASY: "easyLabel", MODERATE: "moderateLabel", HARD: "hardLabel", VERY_HARD: "veryHardLabel",
+};
+
+const typeLabelKeys: Record<string, string> = {
+  MOUNTAIN: "mountaineeringLabel", FOREST: "forestLabel", CITY: "cityLabel", VILLAGE: "villageLabel", NATURE: "natureLabel",
 };
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const isFa = locale === "fa";
+  const [popularTours, setPopularTours] = useState<TourCard[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    fetch("/api/tours")
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setPopularTours(d.data.slice(0, 6)); })
+      .catch(() => {});
+    fetch("/api/reviews/featured")
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setTestimonials(d.data); })
+      .catch(() => {});
+  }, []);
 
   const heroSlides = [
     { title: t.home.heroTitle1, subtitle: t.home.heroSubtitle1, gradient: "from-emerald-600/90 to-teal-700/90" },
@@ -93,11 +111,12 @@ export default function HomePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.home.searchDestination}</label>
                 <select className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-900 bg-gray-50">
                   <option>{t.home.allDestinations}</option>
-                  <option>Isfahan</option>
-                  <option>Shiraz</option>
-                  <option>Yazd</option>
-                  <option>Tehran</option>
                   <option>Mazandaran</option>
+                  <option>Isfahan</option>
+                  <option>Fars</option>
+                  <option>Gilan</option>
+                  <option>Yazd</option>
+                  <option>Kerman</option>
                 </select>
               </div>
               <div>
@@ -151,6 +170,40 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold text-gray-900">{t.home.popularTours}</h2>
               <p className="text-gray-600 mt-2">{t.home.popularToursDesc}</p>
             </div>
+            {popularTours.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {popularTours.map((tour) => (
+                  <Link key={tour.id} href={`/tours/${tour.slug}`} className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="h-52 relative overflow-hidden">
+                      {tour.imageUrl ? (
+                        <img src={tour.imageUrl} alt={tour.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500" />
+                      )}
+                      <div className="absolute top-3 left-3"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${difficultyColors[tour.difficulty]}`}>{t.tours[difficultyLabels[tour.difficulty] as keyof typeof t.tours]}</span></div>
+                      <div className="absolute bottom-3 right-3 bg-white/90 px-2.5 py-1 rounded-full"><span className="text-sm font-bold text-emerald-600">${tour.price}</span></div>
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{t.tours[typeLabelKeys[tour.type] as keyof typeof t.tours]}</span>
+                        <span className="text-xs text-gray-400">&bull;</span>
+                        <span className="text-xs text-gray-500">{tour.durationDays} {t.common.days}</span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">{isFa ? tour.titleFa : tour.titleEn}</h3>
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8 2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <span className="text-sm font-medium text-gray-900">{tour.averageRating}</span>
+                        <span className="text-sm text-gray-400">({tour.totalReviews})</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4" />
+              </div>
+            )}
             <div className="text-center mt-10">
               <Link href="/tours" className="inline-flex items-center px-8 py-3 border-2 border-emerald-600 text-emerald-600 font-semibold rounded-lg hover:bg-emerald-600 hover:text-white transition-colors">
                 {t.common.viewAll} {t.common.tours}
@@ -192,27 +245,33 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold text-white">{t.home.testimonials}</h2>
               <p className="text-emerald-100 mt-2">{t.home.testimonialsDesc}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {testimonials.map((testimonial, i) => (
-                <div key={i} className="bg-white rounded-xl p-6">
-                  <div className="flex items-center gap-1 mb-4">
-                    {Array.from({ length: testimonial.rating }).map((_, j) => (
-                      <svg key={j} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-gray-600 mb-4">&quot;{testimonial.text}&quot;</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-semibold text-sm">{testimonial.avatar}</div>
-                    <div>
-                      <p className="font-medium text-gray-900">{testimonial.name}</p>
-                      <p className="text-sm text-gray-500">{testimonial.country}</p>
+            {testimonials.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {testimonials.map((testimonial) => (
+                  <div key={testimonial.id} className="bg-white rounded-xl p-6">
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array.from({ length: testimonial.rating }).map((_, j) => (
+                        <svg key={j} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8 2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="text-gray-600 mb-4">&quot;{testimonial.comment}&quot;</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-semibold text-sm">{testimonial.userName?.charAt(0) || "?"}</div>
+                      <div>
+                        <p className="font-medium text-gray-900">{testimonial.userName}</p>
+                        <p className="text-sm text-gray-500">{testimonial.tourTitle} {testimonial.country ? `- ${testimonial.country}` : ""}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-emerald-100">{isFa ? "نظرات به زودی اضافه می‌شود" : "Reviews coming soon"}</p>
+              </div>
+            )}
           </div>
         </section>
 

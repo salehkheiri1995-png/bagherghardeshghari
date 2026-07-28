@@ -193,7 +193,16 @@ export default function TourDetailPage() {
     );
   }
 
-  const selectedDate = tour.tourDates.find((d) => d.id === selectedDateId);
+  const safeTourDates = Array.isArray(tour.tourDates) ? tour.tourDates : [];
+  const safeItinerary = Array.isArray(tour.itinerary) ? tour.itinerary : [];
+  const safeIncludes = Array.isArray(tour.includes) ? tour.includes : [];
+  const safeIncludesFa = Array.isArray(tour.includesFa) ? tour.includesFa : [];
+  const safeExcludes = Array.isArray(tour.excludes) ? tour.excludes : [];
+  const safeExcludesFa = Array.isArray(tour.excludesFa) ? tour.excludesFa : [];
+  const safeRequirements = Array.isArray(tour.requirements) ? tour.requirements : [];
+  const safeRequirementsFa = Array.isArray(tour.requirementsFa) ? tour.requirementsFa : [];
+
+  const selectedDate = safeTourDates.find((d) => d.id === selectedDateId);
   const datePrice = selectedDate?.specialPrice || tour.price;
   const totalPrice = datePrice * guests;
 
@@ -266,7 +275,7 @@ export default function TourDetailPage() {
                 <div className="p-6">
                   {activeTab === "itinerary" && (
                     <div className="space-y-6">
-                      {tour.itinerary.length > 0 ? tour.itinerary.map((day) => (
+                      {safeItinerary.length > 0 ? safeItinerary.map((day) => (
                         <div key={day.day} className="flex gap-4">
                           <div className="flex flex-col items-center">
                             <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-sm flex-shrink-0">{day.day}</div>
@@ -280,12 +289,12 @@ export default function TourDetailPage() {
                             <p className="text-gray-600 mb-2">{isFa ? day.descriptionFa : day.description}</p>
                             <p className="text-gray-500 text-sm mb-3" dir="rtl">{isFa ? day.description : day.descriptionFa}</p>
                             <div className="flex flex-wrap gap-2 mb-2">
-                              {(isFa ? day.activitiesFa : day.activities).map((activity, i) => (
+                              {(isFa ? (day.activitiesFa || []) : (day.activities || [])).map((activity, i) => (
                                 <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">{activity}</span>
                               ))}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              {(isFa ? day.activities : day.activitiesFa).map((activity, i) => (
+                              {(isFa ? (day.activities || []) : (day.activitiesFa || [])).map((activity, i) => (
                                 <span key={i} className="px-3 py-1 bg-gray-50 text-gray-500 text-xs rounded-full" dir="rtl">{activity}</span>
                               ))}
                             </div>
@@ -313,13 +322,13 @@ export default function TourDetailPage() {
                           {t.tourDetail.whatsIncluded}
                         </h3>
                         <ul className="space-y-3">
-                          {tour.includes.map((item, i) => (
+                          {safeIncludes.map((item, i) => (
                             <li key={i} className="text-gray-600">
                               <div className="flex items-start gap-3">
                                 <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                 <div>
                                   <span>{item}</span>
-                                  <span className="block text-sm text-gray-400" dir="rtl">{tour.includesFa[i]}</span>
+                                  <span className="block text-sm text-gray-400" dir="rtl">{safeIncludesFa[i]}</span>
                                 </div>
                               </div>
                             </li>
@@ -332,13 +341,13 @@ export default function TourDetailPage() {
                           {t.tourDetail.whatsNotIncluded}
                         </h3>
                         <ul className="space-y-3">
-                          {tour.excludes.map((item, i) => (
+                          {safeExcludes.map((item, i) => (
                             <li key={i} className="text-gray-600">
                               <div className="flex items-start gap-3">
                                 <svg className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 <div>
                                   <span>{item}</span>
-                                  <span className="block text-sm text-gray-400" dir="rtl">{tour.excludesFa[i]}</span>
+                                  <span className="block text-sm text-gray-400" dir="rtl">{safeExcludesFa[i]}</span>
                                 </div>
                               </div>
                             </li>
@@ -425,17 +434,17 @@ export default function TourDetailPage() {
                 </div>
               </div>
 
-              {tour.requirements.length > 0 && (
+                    {safeRequirements.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-4">{t.tourDetail.requirements}</h2>
                   <ul className="space-y-2">
-                    {tour.requirements.map((req, i) => (
+                      {safeRequirements.map((req, i) => (
                       <li key={i} className="flex items-center gap-2 text-gray-600">
                         <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         <div>
-                          <span>{isFa ? tour.requirementsFa[i] : req}</span>
+                            <span>{isFa ? safeRequirementsFa[i] : req}</span>
                           <span className="text-gray-400 mx-2">|</span>
-                          <span className="text-sm text-gray-400" dir="rtl">{isFa ? req : tour.requirementsFa[i]}</span>
+                            <span className="text-sm text-gray-400" dir="rtl">{isFa ? req : safeRequirementsFa[i]}</span>
                         </div>
                       </li>
                     ))}
@@ -466,9 +475,9 @@ export default function TourDetailPage() {
                   <div className="space-y-4 mb-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.tourDetail.selectDate}</label>
-                      {tour.tourDates.length > 0 ? (
+                      {safeTourDates.length > 0 ? (
                         <select value={selectedDateId} onChange={(e) => setSelectedDateId(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm">
-                          {tour.tourDates.map((date) => (
+                            {safeTourDates.map((date) => (
                             <option key={date.id} value={date.id}>
                               {new Date(date.startDate).toLocaleDateString()} - {new Date(date.endDate).toLocaleDateString()} ({date.availableSpots} {t.common.spotsLeft})
                               {date.specialPrice ? ` - $${date.specialPrice}` : ""}
