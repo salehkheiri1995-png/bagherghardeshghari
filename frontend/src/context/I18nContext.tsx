@@ -14,6 +14,26 @@ import fa from "@/messages/fa";
 type Messages = typeof en;
 type Locale = "en" | "fa" | "ar" | "ru" | "zh" | "es";
 
+// نقشه زبان به locale استاندار
+const localeMap: Record<Locale, string> = {
+  en: "en-US",
+  fa: "fa-IR",
+  ar: "ar-SA",
+  ru: "ru-RU",
+  zh: "zh-CN",
+  es: "es-ES",
+};
+
+// نقشه زبان به واحد پول
+const currencyMap: Record<Locale, string> = {
+  en: "USD",
+  fa: "IRR",
+  ar: "SAR",
+  ru: "RUB",
+  zh: "CNY",
+  es: "EUR",
+};
+
 const translations: Record<string, Messages> = {
   en,
   fa: fa as unknown as Messages,
@@ -31,6 +51,10 @@ interface I18nContextType {
   t: Messages;
   isRtl: boolean;
   dir: "ltr" | "rtl";
+  /** قیمت رو بر اساس locale فعلی فرمت می‌کنه */
+  formatCurrency: (amount: number, currency?: string) => string;
+  /** تاریخ رو بر اساس locale فعلی فرمت می‌کنه */
+  formatDate: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) => string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -63,12 +87,50 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const isRtl = rtlLocales.includes(locale);
 
+  const formatCurrency = useCallback(
+    (amount: number, currency?: string): string => {
+      const resolvedCurrency = currency || currencyMap[locale];
+      try {
+        return new Intl.NumberFormat(localeMap[locale], {
+          style: "currency",
+          currency: resolvedCurrency,
+          maximumFractionDigits: 0,
+        }).format(amount);
+      } catch {
+        return `${resolvedCurrency} ${amount.toLocaleString()}`;
+      }
+    },
+    [locale]
+  );
+
+  const formatDate = useCallback(
+    (
+      date: Date | string | number,
+      options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    ): string => {
+      try {
+        return new Intl.DateTimeFormat(localeMap[locale], options).format(
+          new Date(date)
+        );
+      } catch {
+        return String(date);
+      }
+    },
+    [locale]
+  );
+
   const value: I18nContextType = {
     locale,
     setLocale,
     t: translations[locale] || translations.en,
     isRtl,
     dir: isRtl ? "rtl" : "ltr",
+    formatCurrency,
+    formatDate,
   };
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
