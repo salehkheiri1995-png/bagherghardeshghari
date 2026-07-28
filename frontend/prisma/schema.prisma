@@ -1,0 +1,440 @@
+// VisitIran - Complete Database Schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ==========================================
+// USER MODEL
+// ==========================================
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  country   String?
+  phone     String?
+  bio       String?
+  role      String   @default("USER") // USER, GUIDE, ADMIN, SUPER_ADMIN
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings       Booking[]
+  reviews        Review[]
+  articles       Article[]
+  wishlists      Wishlist[]
+  uploadedMedia  Media[]
+  tourGuideTours Tour[]   @relation("GuideTours")
+
+  @@index([email])
+  @@index([role])
+}
+
+// ==========================================
+// PROVINCE MODEL
+// ==========================================
+model Province {
+  id          String   @id @default(uuid())
+  name        String
+  nameEn      String
+  nameAr      String?
+  nameRu      String?
+  nameZh      String?
+  nameEs      String?
+  description String?
+  image       String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attractions Attraction[]
+  tours       Tour[]
+
+  @@index([nameEn])
+}
+
+// ==========================================
+// TOUR MODEL
+// ==========================================
+model Tour {
+  id            String   @id @default(uuid())
+  title         String
+  titleEn       String
+  titleFa       String?
+  titleAr       String?
+  titleRu       String?
+  titleZh       String?
+  titleEs       String?
+  slug          String   @unique
+  description   String
+  descriptionEn String
+  descriptionFa String?
+  descriptionAr String?
+  descriptionRu String?
+  descriptionZh String?
+  descriptionEs String?
+  type          String   // MOUNTAIN, FOREST, CITY, VILLAGE, NATURE
+  difficulty    String   @default("MODERATE")
+  durationDays  Int
+  price         Float
+  discountPrice Float?
+  currency      String   @default("USD")
+  capacity      Int
+  minAge        Int      @default(18)
+  maxGroupSize  Int      @default(15)
+  location      String
+  province      String
+  city          String?
+  address       String?
+  latitude      Float?
+  longitude     Float?
+  includes      String   @default("[]")
+  includesFa    String?
+  excludes      String   @default("[]")
+  excludesFa    String?
+  requirements  String   @default("[]")
+  requirementsFa String?
+  itinerary     String   @default("[]")
+  itineraryFa   String?
+  status        String   @default("DRAFT")
+  isFeatured    Boolean  @default(false)
+  isArchived    Boolean  @default(false)
+  averageRating Float   @default(0)
+  totalReviews  Int      @default(0)
+  totalBookings Int      @default(0)
+  views         Int      @default(0)
+  guideLang     String   @default("EN")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  provinceRef Province? @relation(fields: [provinceId], references: [id])
+  provinceId  String?
+  createdBy   String?
+  creator     User?     @relation("GuideTours", fields: [createdBy], references: [id])
+
+  tourDates   TourDate[]
+  bookings    Booking[]
+  media       Media[]
+  reviews     Review[]
+  wishlists   Wishlist[]
+  tourAttrs   TourAttraction[]
+
+  @@index([type])
+  @@index([difficulty])
+  @@index([status])
+  @@index([isFeatured])
+  @@index([province])
+  @@index([slug])
+}
+
+// ==========================================
+// TOUR DATE MODEL
+// ==========================================
+model TourDate {
+  id             String   @id @default(uuid())
+  tourId         String
+  tour           Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  startDate      DateTime
+  endDate        DateTime
+  availableSpots Int
+  maxCapacity    Int
+  isActive       Boolean  @default(true)
+  specialPrice   Float?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@index([tourId])
+  @@index([startDate])
+  @@index([isActive])
+}
+
+// ==========================================
+// ATTRACTION MODEL
+// ==========================================
+model Attraction {
+  id            String   @id @default(uuid())
+  name          String
+  nameEn        String
+  nameAr        String?
+  nameRu        String?
+  nameZh        String?
+  nameEs        String?
+  description   String
+  descriptionEn String?
+  type          String
+  image         String?
+  latitude      Float?
+  longitude     Float?
+  address       String?
+  isPopular     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  province   Province @relation(fields: [provinceId], references: [id])
+  provinceId String
+  tourAttrs  TourAttraction[]
+
+  @@index([type])
+  @@index([provinceId])
+  @@index([isPopular])
+}
+
+// ==========================================
+// TOUR ATTRACTION (Many-to-Many)
+// ==========================================
+model TourAttraction {
+  id           String     @id @default(uuid())
+  tour         Tour       @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  tourId       String
+  attraction   Attraction @relation(fields: [attractionId], references: [id], onDelete: Cascade)
+  attractionId String
+  dayNumber    Int?
+
+  @@unique([tourId, attractionId])
+}
+
+// ==========================================
+// BOOKING MODEL
+// ==========================================
+model Booking {
+  id                    String   @id @default(uuid())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+  tourId                String
+  tour                  Tour     @relation(fields: [tourId], references: [id])
+  tourDateId            String?
+  tourDate              TourDate? @relation(fields: [tourDateId], references: [id])
+  numberOfGuests        Int      @default(1)
+  totalPrice            Float
+  discountAmount        Float    @default(0)
+  finalPrice            Float
+  currency              String   @default("USD")
+  status                String   @default("PENDING")
+  paymentMethod         String?
+  paymentId             String?
+  stripeSessionId       String?
+  paymentIntentId       String?
+  guestName             String?
+  guestEmail            String?
+  guestPhone            String?
+  guestCountry          String?
+  guestNotes            String?
+  specialRequests       String?
+  transportService      Boolean  @default(false)
+  accommodationService  Boolean  @default(false)
+  insuranceService      Boolean  @default(false)
+  visaService           Boolean  @default(false)
+  couponCode            String?
+  bookedAt              DateTime @default(now())
+  paidAt                DateTime?
+  confirmedAt           DateTime?
+  completedAt           DateTime?
+  cancelledAt           DateTime?
+  cancelReason          String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tourId])
+  @@index([status])
+  @@index([bookedAt])
+}
+
+// ==========================================
+// MEDIA MODEL
+// ==========================================
+model Media {
+  id           String   @id @default(uuid())
+  tourId       String?
+  tour         Tour?    @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  type         String
+  url          String
+  thumbnail    String?
+  caption      String?
+  captionEn    String?
+  altText      String?
+  isArchive    Boolean  @default(false)
+  location     String?
+  dateTaken    DateTime?
+  guideName    String?
+  tripNotes    String?
+  uploadedById String?
+  uploader     User?    @relation(fields: [uploadedById], references: [id])
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([type])
+  @@index([isArchive])
+}
+
+// ==========================================
+// REVIEW MODEL
+// ==========================================
+model Review {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  tourId      String
+  tour        Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  rating      Int
+  title       String?
+  comment     String
+  pros        String?
+  cons        String?
+  travelDate  DateTime?
+  isVerified  Boolean  @default(false)
+  isApproved  Boolean  @default(false)
+  helpfulCount Int   @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, tourId])
+  @@index([tourId])
+  @@index([rating])
+}
+
+// ==========================================
+// ARTICLE MODEL
+// ==========================================
+model Article {
+  id          String   @id @default(uuid())
+  title       String
+  titleEn     String
+  slug        String   @unique
+  content     String
+  contentEn   String?
+  excerpt     String?
+  excerptEn   String?
+  category    String
+  tags        String   @default("[]")
+  image       String?
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id])
+  views       Int      @default(0)
+  isPublished Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([slug])
+}
+
+// ==========================================
+// WISHLIST MODEL
+// ==========================================
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tourId    String
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, tourId])
+  @@index([userId])
+}
+
+// ==========================================
+// COUPON MODEL
+// ==========================================
+model Coupon {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  description   String?
+  discountType  String   @default("PERCENTAGE")
+  discountValue Float
+  minPurchase   Float?
+  maxDiscount   Float?
+  usageLimit    Int?
+  usageCount    Int      @default(0)
+  isActive      Boolean  @default(true)
+  validFrom     DateTime
+  validUntil    DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
+
+// ==========================================
+// NEWSLETTER MODEL
+// ==========================================
+model Newsletter {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// ==========================================
+// CONTACT MESSAGE MODEL
+// ==========================================
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  phone     String?
+  isRead    Boolean  @default(false)
+  isReplied Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead])
+}
+
+// ==========================================
+// SLIDER MODEL
+// ==========================================
+model Slider {
+  id          String   @id @default(uuid())
+  title       String
+  titleEn     String?
+  subtitle    String?
+  subtitleEn  String?
+  image       String
+  link        String?
+  buttonText  String?
+  buttonTextEn String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+// ==========================================
+// TRANSLATION MODEL
+// ==========================================
+model Translation {
+  id        String   @id @default(uuid())
+  key       String
+  locale    String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, locale])
+  @@index([locale])
+}
