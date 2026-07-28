@@ -17,6 +17,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error: "Session ID is required" }, { status: 400 });
     }
 
+    if (!stripe) {
+      return NextResponse.json({ success: false, error: "Payment not configured" }, { status: 503 });
+    }
+
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.metadata?.bookingId) {

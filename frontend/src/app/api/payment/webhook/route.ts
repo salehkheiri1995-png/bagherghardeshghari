@@ -11,6 +11,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No signature" }, { status: 400 });
   }
 
+  if (!stripe) {
+    return NextResponse.json({ error: "Payment not configured" }, { status: 503 });
+  }
+
   let event: Stripe.Event;
 
   try {

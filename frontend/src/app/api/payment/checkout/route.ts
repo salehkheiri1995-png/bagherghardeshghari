@@ -67,6 +67,25 @@ export async function POST(request: Request) {
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
+    if (!stripe) {
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          status: "CONFIRMED",
+          confirmedAt: new Date(),
+          paymentMethod: "manual",
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          sessionId: null,
+          url: `${baseUrl}/booking/success?booking_id=${bookingId}`,
+        },
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       customer_email: booking.guestEmail || undefined,

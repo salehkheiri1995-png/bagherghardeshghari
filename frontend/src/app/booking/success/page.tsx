@@ -19,26 +19,41 @@ interface BookingData {
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const bookingId = searchParams.get("booking_id");
   const { t } = useI18n();
   const [booking, setBooking] = useState<BookingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!sessionId) {
-      setError("No session found");
-      setLoading(false);
-      return;
-    }
-
     const verifyPayment = async () => {
       try {
-        const res = await fetch(`/api/payment/verify?session_id=${sessionId}`);
-        const data = await res.json();
-        if (data.success && data.data.booking) {
-          setBooking(data.data.booking);
+        if (sessionId) {
+          const res = await fetch(`/api/payment/verify?session_id=${sessionId}`);
+          const data = await res.json();
+          if (data.success && data.data.booking) {
+            setBooking(data.data.booking);
+          } else {
+            setError(data.error || "Payment verification failed");
+          }
+        } else if (bookingId) {
+          const token = localStorage.getItem("token");
+          const res = await fetch(`/api/bookings?limit=50`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          const data = await res.json();
+          if (data.success) {
+            const found = data.data.find((b: BookingData) => b.id === bookingId);
+            if (found) {
+              setBooking(found);
+            } else {
+              setError("Booking not found");
+            }
+          } else {
+            setError("Failed to load booking");
+          }
         } else {
-          setError(data.error || "Payment verification failed");
+          setError("No session or booking found");
         }
       } catch {
         setError("Failed to verify payment");
@@ -48,7 +63,7 @@ export default function BookingSuccessPage() {
     };
 
     verifyPayment();
-  }, [sessionId]);
+  }, [sessionId, bookingId]);
 
   if (loading) {
     return (

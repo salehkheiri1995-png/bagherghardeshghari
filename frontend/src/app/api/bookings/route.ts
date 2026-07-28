@@ -81,7 +81,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Tour not found" }, { status: 404 });
     }
 
-    let totalPrice = tour.price * numberOfGuests;
+    let tourDate = null;
+    if (tourDateId) {
+      tourDate = await prisma.tourDate.findUnique({ where: { id: tourDateId } });
+      if (!tourDate || !tourDate.isActive) {
+        return NextResponse.json({ success: false, error: "Tour date not found or inactive" }, { status: 400 });
+      }
+      if (tourDate.availableSpots < numberOfGuests) {
+        return NextResponse.json({ success: false, error: "Not enough spots available" }, { status: 400 });
+      }
+    }
+
+    let totalPrice = (tourDate?.specialPrice || tour.price) * numberOfGuests;
 
     // Apply coupon discount
     let discountAmount = 0;
@@ -117,7 +128,7 @@ export async function POST(request: Request) {
         tourId,
         tourDateId: tourDateId || null,
         numberOfGuests,
-        totalPrice: tour.price * numberOfGuests,
+        totalPrice: (tourDate?.specialPrice || tour.price) * numberOfGuests,
         discountAmount,
         finalPrice,
         currency: tour.currency,
@@ -153,6 +164,20 @@ export async function POST(request: Request) {
         }),
       });
     }
+
+    // Decrement available spots on tour date
+    if (tourDateId && tourDate) {
+      await prisma.tourDate.update({
+        where: { id: tourDateId },
+        data: { availableSpots: { decrement: numberOfGuests } },
+      });
+    }
+
+    // Increment total bookings on tour
+    await prisma.tour.update({
+      where: { id: tourId },
+      data: { totalBookings: { increment: 1 } },
+    });
 
     return NextResponse.json({
       success: true,

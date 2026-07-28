@@ -112,6 +112,8 @@ model Tour {
   totalBookings Int      @default(0)
   views         Int      @default(0)
   guideLang     String   @default("EN")
+  imageUrl      String?
+  galleryImages String   @default("[]")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -122,6 +124,7 @@ model Tour {
 
   tourDates   TourDate[]
   bookings    Booking[]
+  pastTours   PastTour[]
   media       Media[]
   reviews     Review[]
   wishlists   Wishlist[]
@@ -249,6 +252,38 @@ model Booking {
   @@index([tourId])
   @@index([status])
   @@index([bookedAt])
+}
+
+// ==========================================
+// PAST TOUR (ARCHIVE) MODEL
+// ==========================================
+model PastTour {
+  id              String   @id @default(uuid())
+  tourId          String
+  tour            Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  title           String
+  titleFa         String?
+  description     String
+  descriptionFa   String?
+  date            DateTime
+  guideName       String
+  guideNameFa     String?
+  location        String
+  locationFa      String?
+  photos          Int      @default(0)
+  imageUrl        String?
+  galleryImages   String   @default("[]")
+  highlights      String   @default("[]")
+  highlightsFa    String?
+  participants    Int?
+  rating          Float?
+  weather         String?
+  weatherFa       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([date])
 }
 
 // ==========================================
