@@ -43,6 +43,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ---- helpers برای sync کردن توکن با cookie ----
+// proxy.ts سرور-ساید فقط از cookie می‌خونه
+function setAuthCookie(token: string) {
+  // 7 روز انقضا، SameSite=Lax برای امنیت کافی در SSR
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `auth-token=${token}; path=/; expires=${expires}; SameSite=Lax`;
+}
+
+function clearAuthCookie() {
+  document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+}
+// -----------------------------------------------
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -54,9 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchUser = useCallback(async (authToken: string) => {
     try {
       const response = await fetch("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       const data = await response.json();
 
@@ -64,11 +75,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(data.data);
       } else {
         localStorage.removeItem("token");
+        clearAuthCookie();
         setToken(null);
         setUser(null);
       }
     } catch {
       localStorage.removeItem("token");
+      clearAuthCookie();
       setToken(null);
       setUser(null);
     }
@@ -78,6 +91,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
+      // مطمئن بشیم cookie هم ست شده (برای refresh صفحه)
+      setAuthCookie(storedToken);
       fetchUser(storedToken).finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
@@ -98,9 +113,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: data.error };
       }
 
-      localStorage.setItem("token", data.data.token);
-      setToken(data.data.token);
-      setUser(data.data.user);
+      const { token: newToken, user: newUser } = data.data;
+
+      // ذخیره در localStorage و cookie با هم
+      localStorage.setItem("token", newToken);
+      setAuthCookie(newToken);
+      setToken(newToken);
+      setUser(newUser);
 
       return {};
     } catch {
@@ -128,9 +147,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: data.error };
       }
 
-      localStorage.setItem("token", data.data.token);
-      setToken(data.data.token);
-      setUser(data.data.user);
+      const { token: newToken, user: newUser } = data.data;
+
+      localStorage.setItem("token", newToken);
+      setAuthCookie(newToken);
+      setToken(newToken);
+      setUser(newUser);
 
       return {};
     } catch {
@@ -140,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    clearAuthCookie();
     setToken(null);
     setUser(null);
     router.push("/");
