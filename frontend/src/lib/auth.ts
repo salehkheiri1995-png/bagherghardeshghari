@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify } from "jose";
 
-function getJwtSecret(): string {
+function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error(
@@ -15,7 +15,7 @@ function getJwtSecret(): string {
       "This is insecure. Please use a longer secret key."
     );
   }
-  return secret;
+  return new TextEncoder().encode(secret);
 }
 
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
@@ -38,17 +38,24 @@ export async function verifyPassword(
   return bcrypt.compare(password, hashedPassword);
 }
 
-export function generateToken(payload: JwtPayload): string {
+export async function generateToken(payload: JwtPayload): Promise<string> {
   const secret = getJwtSecret();
-  return jwt.sign(payload, secret, {
-    expiresIn: JWT_EXPIRES_IN as string,
-  } as jwt.SignOptions);
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(JWT_EXPIRES_IN)
+    .sign(secret);
 }
 
-export function verifyToken(token: string): JwtPayload | null {
+export async function verifyToken(token: string): Promise<JwtPayload | null> {
   try {
     const secret = getJwtSecret();
-    return jwt.verify(token, secret) as JwtPayload;
+    const { payload } = await jwtVerify(token, secret);
+    return {
+      userId: payload.userId as string,
+      email: payload.email as string,
+      role: payload.role as string,
+    };
   } catch {
     return null;
   }
@@ -62,7 +69,9 @@ export function getTokenFromRequest(request: Request): string | null {
   return null;
 }
 
-export function extractUserFromRequest(request: Request): JwtPayload | null {
+export async function extractUserFromRequest(
+  request: Request
+): Promise<JwtPayload | null> {
   const token = getTokenFromRequest(request);
   if (!token) return null;
   return verifyToken(token);
