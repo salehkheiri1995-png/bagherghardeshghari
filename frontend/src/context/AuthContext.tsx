@@ -43,7 +43,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// ---- helpers برای sync کردن توکن با cookie HttpOnly ----
 async function setAuthCookie(token: string) {
   await fetch("/api/auth/set-cookie", {
     method: "POST",
@@ -55,7 +54,6 @@ async function setAuthCookie(token: string) {
 async function clearAuthCookie() {
   await fetch("/api/auth/set-cookie", { method: "DELETE" });
 }
-// -----------------------------------------------
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -115,11 +113,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const { token: newToken, user: newUser } = data.data;
 
-      // ذخیره در localStorage و cookie با هم
+      // ✅ cookie از login route مستقیم set میشه — نیازی به set-cookie جداگانه نیست
+      // ولی localStorage رو هم sync میکنیم برای client-side
       localStorage.setItem("token", newToken);
-      await setAuthCookie(newToken);
       setToken(newToken);
       setUser(newUser);
+
+      // ✅ FIX: redirect به صفحه قبلی یا dashboard
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirect") || "/dashboard";
+      router.push(redirectTo);
 
       return {};
     } catch {
@@ -154,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(newToken);
       setUser(newUser);
 
+      router.push("/dashboard");
       return {};
     } catch {
       return { error: "Network error. Please try again." };
