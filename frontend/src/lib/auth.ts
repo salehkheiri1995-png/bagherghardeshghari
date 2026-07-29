@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
@@ -62,9 +63,18 @@ export async function verifyToken(token: string): Promise<JwtPayload | null> {
 }
 
 export function getTokenFromRequest(request: Request): string | null {
+  // 1) Authorization: Bearer <token>
   const authHeader = request.headers.get("Authorization");
   if (authHeader?.startsWith("Bearer ")) {
     return authHeader.substring(7);
+  }
+  // 2) fallback: HttpOnly cookie "auth-token"
+  try {
+    const cookieStore = cookies();
+    const cookieToken = cookieStore.get("auth-token")?.value;
+    if (cookieToken) return cookieToken;
+  } catch {
+    // cookies() ممکنه خارج از request context بیاندازه، ignore میکنیم
   }
   return null;
 }
