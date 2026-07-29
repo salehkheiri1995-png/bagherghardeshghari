@@ -24,6 +24,7 @@
     "@stripe/stripe-js": "^9.12.1",
     "@types/nodemailer": "^8.0.1",
     "bcryptjs": "^3.0.3",
+    "jose": "^6.2.4",
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
     "next": "16.2.12",

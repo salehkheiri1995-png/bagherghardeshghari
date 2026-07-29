@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       title, titleEn, titleFa, type, difficulty, durationDays, price, capacity,
       location, province, description, descriptionEn, descriptionFa,
       includes, includesFa, excludes, excludesFa, requirements, requirementsFa, itinerary, itineraryFa,
-      imageUrl,
+      imageUrl, latitude, longitude,
     } = body;
 
     if (!title || !titleEn || !type || !price || !capacity) {
@@ -73,6 +73,8 @@ export async function POST(request: Request) {
       data: {
         title, titleEn, titleFa: titleFa || "", slug, type, difficulty: difficulty || "MODERATE",
         durationDays: durationDays || 1, price, capacity,         location: location || "", province: province || "",
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
         description: description || "", descriptionEn: descriptionEn || titleEn, descriptionFa: descriptionFa || "",
         imageUrl: imageUrl || null,
         includes: JSON.stringify(includes || []),

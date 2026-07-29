@@ -1,23 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/lib/auth";
+import { jwtVerify } from "jose";
 
-/**
- * مسیرهایی که فقط برای کاربران لاگین‌شده هستن
- */
 const PROTECTED_ROUTES = ["/dashboard", "/profile", "/bookings"];
-
-/**
- * مسیرهایی که فقط ADMIN یا SUPER_ADMIN می‌تونن بهشون دسترسی داشته باشن
- */
 const ADMIN_ROUTES = ["/admin", "/api/admin"];
 
-/**
- * API هایی که بدون توکن هم باید کار کنن
- */
 const PUBLIC_API_ROUTES = [
   "/api/auth/login",
   "/api/auth/register",
   "/api/auth/refresh",
+  "/api/auth/set-cookie",
   "/api/tours",
   "/api/reviews",
   "/api/payment/webhook",
@@ -41,15 +32,27 @@ function isProtectedRoute(pathname: string): boolean {
   );
 }
 
-export function proxy(request: NextRequest) {
+async function verifyJwt(token: string): Promise<{ userId: string; email: string; role: string } | null> {
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
+    const { payload } = await jwtVerify(token, secret);
+    return {
+      userId: payload.userId as string,
+      email: payload.email as string,
+      role: payload.role as string,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // مسیرهای public API رو رد کن
   if (isPublicApiRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // توکن رو از Authorization header یا cookie بخون
   const authHeader = request.headers.get("Authorization");
   const tokenFromHeader = authHeader?.startsWith("Bearer ")
     ? authHeader.substring(7)
@@ -57,7 +60,6 @@ export function proxy(request: NextRequest) {
   const tokenFromCookie = request.cookies.get("auth-token")?.value;
   const token = tokenFromHeader || tokenFromCookie;
 
-  // --- بررسی مسیرهای Admin ---
   if (isAdminRoute(pathname)) {
     if (!token) {
       if (pathname.startsWith("/api/")) {
@@ -71,7 +73,7 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyJwt(token);
 
     if (!payload) {
       if (pathname.startsWith("/api/")) {
@@ -93,14 +95,12 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // ادمین تأیید شد — اطلاعات کاربر رو به header اضافه کن
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-id", payload.userId);
     requestHeaders.set("x-user-role", payload.role);
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
-  // --- بررسی مسیرهای Protected (dashboard, profile, ...) ---
   if (isProtectedRoute(pathname)) {
     if (!token) {
       return NextResponse.redirect(
@@ -108,7 +108,7 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyJwt(token);
     if (!payload) {
       return NextResponse.redirect(new URL("/login", request.url));
     }

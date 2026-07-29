@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     const { password: _, ...userWithoutPassword } = user;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: {
         user: userWithoutPassword,
@@ -71,6 +71,16 @@ export async function POST(request: Request) {
       },
       message: "Login successful",
     });
+
+    response.cookies.set("auth-token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

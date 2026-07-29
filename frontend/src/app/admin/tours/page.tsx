@@ -62,7 +62,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminToursPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const isFa = locale === "fa";
   const [tours, setTours] = useState<TourItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -77,6 +78,8 @@ export default function AdminToursPage() {
     requirements: "", requirementsFa: "",
     location: "",
     imageUrl: "",
+    latitude: "",
+    longitude: "",
   });
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -123,6 +126,7 @@ export default function AdminToursPage() {
       descriptionEn: "", descriptionFa: "",
       includes: "", includesFa: "", excludes: "", excludesFa: "",
       requirements: "", requirementsFa: "", location: "", imageUrl: "",
+      latitude: "", longitude: "",
     });
     setItinerary([]);
     setShowModal(true);
@@ -144,6 +148,8 @@ export default function AdminToursPage() {
       requirementsFa: (tour.requirementsFa || []).join("\n"),
       location: tour.location || "",
       imageUrl: (tour as unknown as Record<string, string>).imageUrl || "",
+      latitude: (tour as unknown as Record<string, string>).latitude || "",
+      longitude: (tour as unknown as Record<string, string>).longitude || "",
     });
     setItinerary(
       (tour.itinerary || []).map((day, i) => ({
@@ -221,6 +227,8 @@ export default function AdminToursPage() {
       price: Number(formData.price),
       capacity: Number(formData.capacity),
       location: formData.location,
+      latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+      longitude: formData.longitude ? parseFloat(formData.longitude) : null,
       imageUrl: formData.imageUrl || null,
       description: formData.descriptionFa || formData.descriptionEn,
       descriptionEn: formData.descriptionEn,
@@ -592,6 +600,16 @@ export default function AdminToursPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.location}</label>
                       <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? "عرض جغرافیایی (Latitude)" : "Latitude"}</label>
+                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} placeholder="e.g. 32.6546" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? "طول جغرافیایی (Longitude)" : "Longitude"}</label>
+                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} placeholder="e.g. 51.6680" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                   </div>
                 </div>

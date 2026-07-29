@@ -150,19 +150,23 @@ export async function POST(request: Request) {
     });
 
     if (guestEmail) {
-      sendEmail({
-        to: guestEmail,
-        subject: `Booking Confirmed - ${booking.tour.titleEn || booking.tour.title}`,
-        html: bookingConfirmationEmail({
-          guestName,
-          guestEmail,
-          tourName: booking.tour.titleEn || booking.tour.title,
-          numberOfGuests,
-          finalPrice: booking.finalPrice,
-          currency: booking.currency,
-          bookingId: booking.id,
-        }),
-      });
+      try {
+        await sendEmail({
+          to: guestEmail,
+          subject: `Booking Confirmed - ${booking.tour.titleEn || booking.tour.title}`,
+          html: bookingConfirmationEmail({
+            guestName,
+            guestEmail,
+            tourName: booking.tour.titleEn || booking.tour.title,
+            numberOfGuests,
+            finalPrice: booking.finalPrice,
+            currency: booking.currency,
+            bookingId: booking.id,
+          }),
+        });
+      } catch (emailError) {
+        console.error("Error sending booking confirmation email:", emailError);
+      }
     }
 
     // Decrement available spots on tour date
