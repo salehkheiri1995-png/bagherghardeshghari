@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
 
-// GET all users (admin)
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -51,10 +50,9 @@ export async function GET(request: Request) {
   }
 }
 
-// PUT update user role/status (admin)
 export async function PUT(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }

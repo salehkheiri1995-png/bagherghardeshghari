@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
 
-// GET all tour dates (admin) - optionally filter by tourId
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -43,10 +42,9 @@ export async function GET(request: Request) {
   }
 }
 
-// POST create tour date (admin)
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -74,9 +72,7 @@ export async function POST(request: Request) {
         notes: notes || null,
         isActive: true,
       },
-      include: {
-        tour: { select: { titleEn: true, slug: true } },
-      },
+      include: { tour: { select: { titleEn: true, slug: true } } },
     });
 
     return NextResponse.json({ success: true, data: tourDate, message: "Tour date created" }, { status: 201 });
@@ -86,10 +82,9 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT update tour date (admin)
 export async function PUT(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -126,10 +121,9 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE tour date (admin)
 export async function DELETE(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }

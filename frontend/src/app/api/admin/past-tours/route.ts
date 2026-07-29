@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
 
-// GET all past tours (admin)
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -29,10 +28,9 @@ export async function GET(request: Request) {
   }
 }
 
-// POST create past tour (admin)
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -51,25 +49,16 @@ export async function POST(request: Request) {
 
     const pastTour = await prisma.pastTour.create({
       data: {
-        tourId,
-        title,
-        titleFa: titleFa || null,
-        description: description || "",
-        descriptionFa: descriptionFa || null,
-        date: new Date(date),
-        guideName,
-        guideNameFa: guideNameFa || null,
-        location: location || "",
-        locationFa: locationFa || null,
-        photos: photos || 0,
-        imageUrl: imageUrl || null,
+        tourId, title, titleFa: titleFa || null,
+        description: description || "", descriptionFa: descriptionFa || null,
+        date: new Date(date), guideName, guideNameFa: guideNameFa || null,
+        location: location || "", locationFa: locationFa || null,
+        photos: photos || 0, imageUrl: imageUrl || null,
         galleryImages: JSON.stringify(galleryImages || []),
         highlights: JSON.stringify(highlights || []),
         highlightsFa: highlightsFa || null,
-        participants: participants || null,
-        rating: rating || null,
-        weather: weather || null,
-        weatherFa: weatherFa || null,
+        participants: participants || null, rating: rating || null,
+        weather: weather || null, weatherFa: weatherFa || null,
       },
     });
 
@@ -80,10 +69,9 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT update past tour (admin)
 export async function PUT(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -111,10 +99,9 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE past tour (admin)
 export async function DELETE(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
