@@ -81,6 +81,7 @@ export default function AdminToursPage() {
     imageUrl: "",
     latitude: "",
     longitude: "",
+    status: "PUBLISHED",
   });
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -128,6 +129,7 @@ export default function AdminToursPage() {
       includes: "", includesFa: "", excludes: "", excludesFa: "",
       requirements: "", requirementsFa: "", location: "", imageUrl: "",
       latitude: "", longitude: "",
+      status: "PUBLISHED",
     });
     setItinerary([]);
     setShowModal(true);
@@ -151,6 +153,7 @@ export default function AdminToursPage() {
       imageUrl: (tour as unknown as Record<string, string>).imageUrl || "",
       latitude: (tour as unknown as Record<string, string>).latitude || "",
       longitude: (tour as unknown as Record<string, string>).longitude || "",
+      status: tour.status || "PUBLISHED",
     });
     setItinerary(
       (tour.itinerary || []).map((day, i) => ({
@@ -240,6 +243,7 @@ export default function AdminToursPage() {
       excludesFa: formData.excludesFa.split("\n").filter(Boolean),
       requirements: formData.requirements.split("\n").filter(Boolean),
       requirementsFa: formData.requirementsFa.split("\n").filter(Boolean),
+      status: formData.status,
       itinerary: itinerary.map((day) => ({
         day: day.day,
         title: day.title,
@@ -269,21 +273,6 @@ export default function AdminToursPage() {
       }
     } catch (err) {
       console.error("Save tour error:", err);
-    }
-  };
-
-  const handleDelete = async (tourId: string) => {
-    if (!confirm("Are you sure you want to delete this tour?")) return;
-    const token = localStorage.getItem("token");
-    try {
-      const res = await fetch(`/api/admin/tours?tourId=${tourId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) fetchTours();
-    } catch (err) {
-      console.error("Delete tour error:", err);
     }
   };
 
@@ -417,6 +406,7 @@ export default function AdminToursPage() {
                   </div>
                 </div>
               </div>
+
               {activeTab === "en" && (
                 <>
                   <div>
@@ -593,7 +583,7 @@ export default function AdminToursPage() {
                       <input type="number" name="price" value={formData.price} onChange={handleChange} min="0" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.capacity}</label>
                       <input type="number" name="capacity" value={formData.capacity} onChange={handleChange} min="1" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
@@ -601,6 +591,14 @@ export default function AdminToursPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.location}</label>
                       <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.status || "Status"}</label>
+                      <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-white">
+                        <option value="PUBLISHED">PUBLISHED ✅</option>
+                        <option value="DRAFT">DRAFT 📝</option>
+                        <option value="CANCELLED">CANCELLED ❌</option>
+                      </select>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4">
@@ -628,4 +626,19 @@ export default function AdminToursPage() {
       )}
     </div>
   );
+
+  async function handleDelete(tourId: string) {
+    if (!confirm("Are you sure you want to delete this tour?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`/api/admin/tours?tourId=${tourId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) fetchTours();
+    } catch (err) {
+      console.error("Delete tour error:", err);
+    }
+  }
 }
