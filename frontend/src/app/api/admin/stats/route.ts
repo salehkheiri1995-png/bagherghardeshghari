@@ -4,27 +4,28 @@ import { extractUserFromRequest } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
 
     const [
-      totalUsers,
-      totalTours,
-      totalBookings,
-      totalRevenue,
-      recentBookings,
-      tourStats,
+      totalUsers, totalTours, totalBookings, totalRevenue, recentBookings, tourStats,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.tour.count({ where: { status: "PUBLISHED" } }),
       prisma.booking.count(),
-      prisma.booking.aggregate({ where: { status: { in: ["PAID", "CONFIRMED", "COMPLETED"] } }, _sum: { finalPrice: true } }),
+      prisma.booking.aggregate({
+        where: { status: { in: ["PAID", "CONFIRMED", "COMPLETED"] } },
+        _sum: { finalPrice: true },
+      }),
       prisma.booking.findMany({
         take: 10,
         orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true } }, tour: { select: { titleEn: true, slug: true } } },
+        include: {
+          user: { select: { name: true } },
+          tour: { select: { titleEn: true, slug: true } },
+        },
       }),
       prisma.tour.findMany({
         where: { status: "PUBLISHED" },
@@ -38,9 +39,7 @@ export async function GET(request: Request) {
       success: true,
       data: {
         stats: {
-          totalUsers,
-          totalTours,
-          totalBookings,
+          totalUsers, totalTours, totalBookings,
           totalRevenue: totalRevenue._sum.finalPrice || 0,
         },
         recentBookings,

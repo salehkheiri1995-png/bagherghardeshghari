@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
 
-// GET all tours (admin)
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -47,10 +46,9 @@ export async function GET(request: Request) {
   }
 }
 
-// POST create tour (admin)
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -98,10 +96,9 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT update tour (admin)
 export async function PUT(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -121,7 +118,6 @@ export async function PUT(request: Request) {
     if (updateData.requirementsFa) updateData.requirementsFa = JSON.stringify(updateData.requirementsFa);
     if (updateData.itinerary) updateData.itinerary = JSON.stringify(updateData.itinerary);
     if (updateData.itineraryFa) updateData.itineraryFa = JSON.stringify(updateData.itineraryFa);
-
     if (updateData.titleEn) {
       updateData.slug = updateData.titleEn.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     }
@@ -138,10 +134,9 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE tour (admin)
 export async function DELETE(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }

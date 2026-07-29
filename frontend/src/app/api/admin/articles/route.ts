@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
 
-// GET all articles (admin)
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -47,10 +46,9 @@ export async function GET(request: Request) {
   }
 }
 
-// POST create article (admin)
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -83,10 +81,9 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT update article (admin)
 export async function PUT(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
@@ -115,10 +112,9 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE article (admin)
 export async function DELETE(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }
