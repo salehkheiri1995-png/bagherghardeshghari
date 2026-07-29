@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const PROTECTED_ROUTES = ["/dashboard", "/profile", "/bookings"];
+const PROTECTED_ROUTES = ["/dashboard", "/profile", "/bookings", "/booking"];
 const ADMIN_ROUTES = ["/admin", "/api/admin"];
 
 const PUBLIC_API_ROUTES = [
@@ -124,5 +124,6 @@ export const config = {
     "/dashboard/:path*",
     "/profile/:path*",
     "/bookings/:path*",
+    "/booking/:path*",
   ],
 };
