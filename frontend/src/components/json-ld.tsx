@@ -87,7 +87,6 @@ export function TourSchema({
   url,
   image,
   province,
-  slug,
 }: TourSchemaProps) {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -115,24 +114,13 @@ export function TourSchema({
       price,
       priceCurrency: currency,
       availability: "https://schema.org/InStock",
-      validFrom: new Date().toISOString(),
+      validFrom: new Date().toISOString().split("T")[0],
       url,
       seller: {
         "@type": "Organization",
         name: "VisitIran",
       },
     },
-    ...(reviewCount > 0
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: rating.toFixed(1),
-            reviewCount,
-            bestRating: "5",
-            worstRating: "1",
-          },
-        }
-      : {}),
     ...(province
       ? {
           location: {
@@ -143,6 +131,17 @@ export function TourSchema({
               addressCountry: "IR",
               addressRegion: province,
             },
+          },
+        }
+      : {}),
+    ...(reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating.toFixed(1),
+            reviewCount,
+            bestRating: "5",
+            worstRating: "1",
           },
         }
       : {}),

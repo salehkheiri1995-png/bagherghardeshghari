@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
-import TourDetailClient from "./TourDetailClient";
+import TourDetailClient from "@/components/tour/TourDetailClient";
+import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-
   const tour = await prisma.tour.findUnique({
     where: { slug },
     select: {
@@ -28,10 +26,8 @@ export async function generateMetadata(
   if (!tour) return {};
 
   const title = tour.titleEn;
-  const description = (
-    tour.descriptionEn || tour.description || ""
-  ).slice(0, 160);
-  const image = tour.imageUrl || "https://visitiran.com/og-default.jpg";
+  const description = (tour.descriptionEn || tour.description).slice(0, 160);
+  const image = tour.imageUrl || "https://visitiran.com/og-image.jpg";
 
   return {
     title,
@@ -43,6 +39,7 @@ export async function generateMetadata(
       "Iran guided tour",
       "Visit Iran",
       tour.titleEn,
+      tour.titleFa || "",
     ],
     alternates: {
       canonical: `https://visitiran.com/tours/${slug}`,
@@ -89,19 +86,6 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function TourDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-
-  const tour = await prisma.tour.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
-
-  if (!tour) notFound();
-
-  return <TourDetailClient slug={slug} />;
+export default function TourDetailPage() {
+  return <TourDetailClient />;
 }

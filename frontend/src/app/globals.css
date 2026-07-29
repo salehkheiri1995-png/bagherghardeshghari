@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-vazirmatn: 'Vazirmatn', sans-serif;
+}
+
 [lang="fa"],
-.font-fa,
-[dir="rtl"] {
+.font-fa {
   font-family: var(--font-vazirmatn), sans-serif;
   direction: rtl;
 }

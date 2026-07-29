@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { WebsiteSchema } from "@/components/json-ld";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -98,11 +99,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${vazirmatn.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${inter.variable} ${vazirmatn.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
+        <WebsiteSchema />
         <Providers>{children}</Providers>
       </body>
     </html>
