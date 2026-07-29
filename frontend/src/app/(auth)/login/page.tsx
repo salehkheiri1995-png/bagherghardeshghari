@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useI18n } from "@/context/I18nContext";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
+
+  const redirect = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +27,7 @@ export default function LoginPage() {
       setError(result.error);
       setIsLoading(false);
     } else {
-      router.push("/dashboard");
+      router.push(redirect);
     }
   };
 
@@ -46,11 +49,11 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t.contact.email}</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t.auth.emailAddress}</label>
               <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-400" placeholder="you@example.com" />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">{t.contact.phone}</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">{t.auth.password}</label>
               <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-400" placeholder="********" />
             </div>
           </div>
@@ -58,7 +61,7 @@ export default function LoginPage() {
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input type="checkbox" className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500" />
-              <span className="ml-2 text-sm text-gray-600">{t.common.confirm}</span>
+              <span className="ml-2 text-sm text-gray-600">{t.auth.rememberMe}</span>
             </label>
           </div>
 
@@ -75,5 +78,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" /></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

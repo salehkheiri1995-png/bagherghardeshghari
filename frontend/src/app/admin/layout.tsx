@@ -33,8 +33,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-4">You don&apos;t have permission to access the admin panel.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.admin.accessDenied}</h2>
+          <p className="text-gray-600 mb-4">{t.admin.noPermission}</p>
           <Link href="/dashboard" className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">{t.common.dashboard}</Link>
         </div>
       </div>

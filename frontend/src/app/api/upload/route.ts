@@ -13,7 +13,9 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "tours";
+    const ALLOWED_FOLDERS = ["tours", "articles", "avatars", "guides"];
+    const rawFolder = (formData.get("folder") as string) || "tours";
+    const folder = ALLOWED_FOLDERS.includes(rawFolder) ? rawFolder : "tours";
 
     if (!file) {
       return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 });

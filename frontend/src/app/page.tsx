@@ -52,9 +52,27 @@ export default function HomePage() {
   }, []);
 
   const heroSlides = [
-    { title: t.home.heroTitle1, subtitle: t.home.heroSubtitle1, gradient: "from-emerald-600/90 to-teal-700/90" },
-    { title: t.home.heroTitle2, subtitle: t.home.heroSubtitle2, gradient: "from-blue-600/90 to-indigo-700/90" },
-    { title: t.home.heroTitle3, subtitle: t.home.heroSubtitle3, gradient: "from-amber-600/90 to-orange-700/90" },
+    {
+      title: t.home.heroTitle1,
+      subtitle: t.home.heroSubtitle1,
+      gradient: "from-emerald-800/70 to-teal-900/70",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85&auto=format&fit=crop",
+      alt: "Mountains above clouds at sunset - Alborz Range",
+    },
+    {
+      title: t.home.heroTitle2,
+      subtitle: t.home.heroSubtitle2,
+      gradient: "from-blue-800/70 to-indigo-900/70",
+      image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=85&auto=format&fit=crop",
+      alt: "Green misty forest valley - Hyrcanian Forests",
+    },
+    {
+      title: t.home.heroTitle3,
+      subtitle: t.home.heroSubtitle3,
+      gradient: "from-amber-800/70 to-orange-900/70",
+      image: "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=1920&q=85&auto=format&fit=crop",
+      alt: "Snow-capped mountain peaks at sunset - Damavand",
+    },
   ];
 
   const stats = [
@@ -77,6 +95,8 @@ export default function HomePage() {
               key={index}
               className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"}`}
             >
+              <img src={slide.image} alt={slide.alt} className="absolute inset-0 w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} />
+              <div className="absolute inset-0 bg-black/30" />
               <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient}`} />
               <div className="absolute inset-0 flex items-center">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -230,9 +250,11 @@ export default function HomePage() {
                 </Link>
               </div>
               <div className="relative">
-                <div className="aspect-[4/3] bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center text-white text-6xl font-bold opacity-20">IR</div>
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=85&auto=format&fit=crop" alt="Islamic Architecture" className="w-full h-full object-cover" loading="lazy" />
                 </div>
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-emerald-100 rounded-2xl -z-10" />
+                <div className="absolute -top-6 -left-6 w-24 h-24 bg-teal-100 rounded-2xl -z-10" />
               </div>
             </div>
           </div>
