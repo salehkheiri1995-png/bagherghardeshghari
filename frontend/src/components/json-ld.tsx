@@ -15,7 +15,8 @@ export function OrganizationSchema({
     name,
     url,
     logo,
-    description: "Discover Iran with guided tours. Ancient history, stunning architecture, desert adventures, and more.",
+    description:
+      "Discover Iran with guided tours. Ancient history, stunning architecture, desert adventures, and more.",
     sameAs: [
       "https://facebook.com/visitiran",
       "https://twitter.com/visitiran",
@@ -37,6 +38,30 @@ export function OrganizationSchema({
   );
 }
 
+export function WebsiteSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "VisitIran",
+    url: "https://visitiran.com",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://visitiran.com/tours?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 interface TourSchemaProps {
   name: string;
   description: string;
@@ -46,6 +71,9 @@ interface TourSchemaProps {
   reviewCount: number;
   duration: string;
   url: string;
+  image?: string;
+  province?: string;
+  slug?: string;
 }
 
 export function TourSchema({
@@ -57,32 +85,67 @@ export function TourSchema({
   reviewCount,
   duration,
   url,
+  image,
+  province,
+  slug,
 }: TourSchemaProps) {
-  const schema = {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
     name,
     description,
     url,
-    touristType: "International Traveler",
+    ...(image ? { image } : {}),
+    provider: {
+      "@type": "TravelAgency",
+      name: "VisitIran - باقر گردشگری",
+      url: "https://visitiran.com",
+    },
+    touristType: {
+      "@type": "Audience",
+      audienceType: "International Travelers",
+    },
     itinerary: {
       "@type": "ItemList",
       numberOfItems: parseInt(duration),
+      name: `${duration}-Day ${name} Itinerary`,
     },
     offers: {
       "@type": "Offer",
       price,
       priceCurrency: currency,
       availability: "https://schema.org/InStock",
-      validFrom: "2026-01-01T00:00:00Z",
+      validFrom: new Date().toISOString(),
+      url,
+      seller: {
+        "@type": "Organization",
+        name: "VisitIran",
+      },
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: rating,
-      reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
+    ...(reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating.toFixed(1),
+            reviewCount,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }
+      : {}),
+    ...(province
+      ? {
+          location: {
+            "@type": "Place",
+            name: province,
+            address: {
+              "@type": "PostalAddress",
+              addressCountry: "IR",
+              addressRegion: province,
+            },
+          },
+        }
+      : {}),
   };
 
   return (
