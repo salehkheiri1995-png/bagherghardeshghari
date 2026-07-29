@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       title, titleEn, titleFa, type, difficulty, durationDays, price, capacity,
       location, province, description, descriptionEn, descriptionFa,
       includes, includesFa, excludes, excludesFa, requirements, requirementsFa, itinerary, itineraryFa,
-      imageUrl, latitude, longitude,
+      imageUrl, latitude, longitude, status,
     } = body;
 
     if (!title || !titleEn || !type || !price || !capacity) {
@@ -72,7 +72,8 @@ export async function POST(request: Request) {
     const tour = await prisma.tour.create({
       data: {
         title, titleEn, titleFa: titleFa || "", slug, type, difficulty: difficulty || "MODERATE",
-        durationDays: durationDays || 1, price, capacity,         location: location || "", province: province || "",
+        durationDays: durationDays || 1, price, capacity,
+        location: location || "", province: province || "",
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
         description: description || "", descriptionEn: descriptionEn || titleEn, descriptionFa: descriptionFa || "",
@@ -85,7 +86,8 @@ export async function POST(request: Request) {
         requirementsFa: JSON.stringify(requirementsFa || []),
         itinerary: JSON.stringify(itinerary || []),
         itineraryFa: JSON.stringify(itineraryFa || []),
-        status: "DRAFT", createdBy: authUser.userId,
+        status: status || "PUBLISHED",
+        createdBy: authUser.userId,
       },
     });
 
