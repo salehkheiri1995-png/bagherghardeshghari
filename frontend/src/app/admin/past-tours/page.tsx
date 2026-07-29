@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useI18n } from "@/context/I18nContext";
+import { parseJsonField } from "@/utils/json-helpers";
 
 interface TourOption {
   id: string;
@@ -61,8 +62,8 @@ export default function AdminPastToursPage() {
       if (pastData.success) {
         setPastTours(pastData.data.map((pt: Record<string, unknown>) => ({
           ...pt,
-          galleryImages: typeof pt.galleryImages === "string" ? JSON.parse(pt.galleryImages as string) : (pt.galleryImages || []),
-          highlights: typeof pt.highlights === "string" ? JSON.parse(pt.highlights as string) : (pt.highlights || []),
+          galleryImages: parseJsonField<string>(pt.galleryImages as string),
+          highlights: parseJsonField<string>(pt.highlights as string),
         })));
       }
       if (toursData.success) setTours(toursData.data);

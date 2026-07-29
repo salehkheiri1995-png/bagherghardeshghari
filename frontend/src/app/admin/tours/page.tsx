@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useI18n } from "@/context/I18nContext";
+import { parseJsonField } from "@/utils/json-helpers";
 
 interface ItineraryDay {
   day: number;
@@ -94,13 +95,13 @@ export default function AdminToursPage() {
       if (data.success) {
         const parsed = data.data.map((tour: Record<string, unknown>) => ({
           ...tour,
-          includes: typeof tour.includes === "string" ? JSON.parse(tour.includes as string) : (tour.includes || []),
-          includesFa: typeof tour.includesFa === "string" ? JSON.parse(tour.includesFa as string) : (tour.includesFa || []),
-          excludes: typeof tour.excludes === "string" ? JSON.parse(tour.excludes as string) : (tour.excludes || []),
-          excludesFa: typeof tour.excludesFa === "string" ? JSON.parse(tour.excludesFa as string) : (tour.excludesFa || []),
-          requirements: typeof tour.requirements === "string" ? JSON.parse(tour.requirements as string) : (tour.requirements || []),
-          requirementsFa: typeof tour.requirementsFa === "string" ? JSON.parse(tour.requirementsFa as string) : (tour.requirementsFa || []),
-          itinerary: typeof tour.itinerary === "string" ? JSON.parse(tour.itinerary as string) : (tour.itinerary || []),
+          includes: parseJsonField<string>(tour.includes as string),
+          includesFa: parseJsonField<string>(tour.includesFa as string),
+          excludes: parseJsonField<string>(tour.excludes as string),
+          excludesFa: parseJsonField<string>(tour.excludesFa as string),
+          requirements: parseJsonField<string>(tour.requirements as string),
+          requirementsFa: parseJsonField<string>(tour.requirementsFa as string),
+          itinerary: parseJsonField(tour.itinerary as string),
         }));
         setTours(parsed);
       }

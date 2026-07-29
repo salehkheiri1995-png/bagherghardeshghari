@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { parseJsonField } from "@/utils/json-helpers";
 
 export async function GET(
   request: Request,
@@ -72,15 +73,15 @@ export async function GET(
 
     const data = {
       ...tour,
-      includes: JSON.parse(tour.includes || "[]"),
-      includesFa: JSON.parse(tour.includesFa || "[]"),
-      excludes: JSON.parse(tour.excludes || "[]"),
-      excludesFa: JSON.parse(tour.excludesFa || "[]"),
-      requirements: JSON.parse(tour.requirements || "[]"),
-      requirementsFa: JSON.parse(tour.requirementsFa || "[]"),
-      itinerary: JSON.parse(tour.itinerary || "[]"),
-      itineraryFa: JSON.parse(tour.itineraryFa || "[]"),
-      galleryImages: JSON.parse(tour.galleryImages || "[]"),
+      includes: parseJsonField<string>(tour.includes),
+      includesFa: parseJsonField<string>(tour.includesFa),
+      excludes: parseJsonField<string>(tour.excludes),
+      excludesFa: parseJsonField<string>(tour.excludesFa),
+      requirements: parseJsonField<string>(tour.requirements),
+      requirementsFa: parseJsonField<string>(tour.requirementsFa),
+      itinerary: parseJsonField(tour.itinerary),
+      itineraryFa: parseJsonField(tour.itineraryFa),
+      galleryImages: parseJsonField<string>(tour.galleryImages),
     };
 
     return NextResponse.json({ success: true, data });

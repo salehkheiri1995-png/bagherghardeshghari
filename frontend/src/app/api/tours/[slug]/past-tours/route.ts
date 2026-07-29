@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { parseJsonField } from "@/utils/json-helpers";
 
 export async function GET(
   request: Request,
@@ -49,8 +50,8 @@ export async function GET(
     const data = pastTours.map((pt) => ({
       ...pt,
       date: pt.date.toISOString(),
-      galleryImages: JSON.parse(pt.galleryImages || "[]"),
-      highlights: JSON.parse(pt.highlights || "[]"),
+      galleryImages: parseJsonField<string>(pt.galleryImages),
+      highlights: parseJsonField<string>(pt.highlights),
     }));
 
     return NextResponse.json({ success: true, data });
