@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser || (authUser.role !== "ADMIN" && authUser.role !== "SUPER_ADMIN" && authUser.role !== "GUIDE")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
     }

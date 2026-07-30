@@ -44,6 +44,27 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
+      };
+    }
+    config.externals = config.externals || [];
+    if (isServer) {
+      config.externals.push({
+        "@prisma/adapter-libsql": "commonjs @prisma/adapter-libsql",
+        "@libsql/client": "commonjs @libsql/client",
+        "@libsql/hrana-client": "commonjs @libsql/hrana-client",
+        "@libsql/isomorphic-ws": "commonjs @libsql/isomorphic-ws",
+      });
+    }
+    return config;
+  },
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME || "VisitIran | باقر گردشگری",

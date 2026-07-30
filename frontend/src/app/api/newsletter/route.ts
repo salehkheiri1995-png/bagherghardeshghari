@@ -6,7 +6,7 @@ import { validateEmail } from "@/lib/validation";
 export async function POST(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`newsletter:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`newsletter:${clientIP}`, {
       windowMs: 60000,
       maxRequests: 3,
     });
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`newsletter-unsub:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`newsletter-unsub:${clientIP}`, {
       windowMs: 60000,
       maxRequests: 5,
     });

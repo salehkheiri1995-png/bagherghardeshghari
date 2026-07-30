@@ -48,6 +48,7 @@ export async function POST(request: Request) {
               status: "CONFIRMED",
               paymentId: (session.payment_intent as string) || session.id,
               paidAt: new Date(),
+              confirmedAt: new Date(),
             },
           });
           console.log(`✅ Booking ${session.metadata.bookingId} confirmed.`);
@@ -86,8 +87,7 @@ export async function POST(request: Request) {
     }
   } catch (dbErr) {
     console.error("❌ Database update failed in webhook:", dbErr);
-    // باید 200 برگردونیم تا Stripe دوباره retry نکنه - برای production اینجا لاگ اضافه کن
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
+    return NextResponse.json({ received: true });
   }
 
   return NextResponse.json({ received: true });

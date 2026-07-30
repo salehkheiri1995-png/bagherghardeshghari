@@ -1,0 +1,377 @@
+ ⚠ Port 3000 is in use, using available port 3001 instead.
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.104:3001
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.6s
+ ○ Compiling /login ...
+Request timed out after 3000ms
+
+Retrying 1/3...
+Request timed out after 3000ms
+
+Retrying 1/3...
+ ✓ Compiled /login in 11.5s (819 modules)
+ GET /login 200 in 11720ms
+ ✓ Compiled /_not-found in 486ms (802 modules)
+ GET /apple-touch-icon.png 404 in 645ms
+ GET /login 200 in 166ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 729ms (885 modules)
+ POST /api/auth/login 200 in 1237ms
+ ✓ Compiled /dashboard in 267ms (904 modules)
+ GET /dashboard 200 in 351ms
+ GET /dashboard 200 in 24ms
+ ✓ Compiled /api/auth/me in 335ms (908 modules)
+ POST /api/auth/set-cookie 200 in 366ms
+ POST /api/auth/set-cookie 200 in 366ms
+ GET /api/auth/me 200 in 390ms
+ GET /api/auth/me 200 in 10ms
+ ✓ Compiled /api/dashboard/stats in 161ms (910 modules)
+ GET /api/dashboard/stats 200 in 200ms
+ GET /api/dashboard/stats 200 in 10ms
+ GET /apple-touch-icon.png 404 in 92ms
+ ✓ Compiled /dashboard/bookings in 250ms (917 modules)
+ GET /dashboard/bookings 200 in 294ms
+ ✓ Compiled /api/bookings in 383ms (971 modules)
+ GET /api/bookings 200 in 430ms
+ GET /api/bookings 200 in 10ms
+ ○ Compiling /tours/[slug] ...
+ ✓ Compiled /tours/[slug] in 839ms (1110 modules)
+ GET /tours/mount-damavand-summit-expedition 200 in 1494ms
+ ✓ Compiled /api/tours/[slug] in 262ms (1094 modules)
+ GET /apple-touch-icon.png 404 in 136ms
+ GET /api/tours/mount-damavand-summit-expedition 200 in 835ms
+ GET /api/tours/mount-damavand-summit-expedition 200 in 26ms
+ ✓ Compiled /api/tours/[slug]/past-tours in 214ms (1096 modules)
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 775ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 14ms
+ ✓ Compiled /admin in 380ms (1109 modules)
+ GET /admin 200 in 506ms
+ POST /api/auth/set-cookie 200 in 15ms
+ GET /api/auth/me 200 in 45ms
+ ✓ Compiled /api/admin/stats in 253ms (1111 modules)
+ GET /api/admin/stats 200 in 317ms
+ GET /api/admin/stats 200 in 14ms
+ GET /apple-touch-icon.png 404 in 111ms
+ GET /admin 200 in 94ms
+ POST /api/auth/set-cookie 200 in 28ms
+ GET /api/auth/me 200 in 48ms
+ GET /api/admin/stats 200 in 28ms
+ GET /api/admin/stats 200 in 26ms
+ GET /apple-touch-icon.png 404 in 78ms
+ ○ Compiling /admin/tours ...
+ ✓ Compiled /admin/tours in 886ms (1120 modules)
+ GET /admin/tours 200 in 1028ms
+ ○ Compiling /api/admin/tours ...
+ ✓ Compiled /api/admin/tours in 972ms (1122 modules)
+ GET /api/admin/tours?limit=50 200 in 1324ms
+ GET /apple-touch-icon.png 404 in 882ms
+ GET /api/admin/tours?limit=50 200 in 25ms
+ ○ Compiling /admin/tour-dates ...
+ ✓ Compiled /admin/tour-dates in 1542ms (1125 modules)
+ GET /admin/tour-dates 200 in 1693ms
+ ○ Compiling /api/admin/tour-dates ...
+ ✓ Compiled /api/admin/tour-dates in 961ms (1127 modules)
+ GET /api/admin/tours?limit=100 200 in 1096ms
+ GET /api/admin/tour-dates?limit=100 200 in 1121ms
+ GET /api/admin/tours?limit=100 200 in 30ms
+ GET /api/admin/tour-dates?limit=100 200 in 26ms
+ GET /apple-touch-icon.png 404 in 211ms
+ ○ Compiling /admin/bookings ...
+ ✓ Compiled /admin/bookings in 648ms (1054 modules)
+ GET /admin/bookings 200 in 817ms
+ ○ Compiling /api/admin/bookings ...
+ ✓ Compiled /api/admin/bookings in 818ms (1056 modules)
+ GET /api/admin/bookings?limit=50 200 in 1154ms
+ GET /apple-touch-icon.png 404 in 801ms
+ GET /api/admin/bookings?limit=50 200 in 15ms
+ ○ Compiling /admin/users ...
+ ✓ Compiled /admin/users in 547ms (1054 modules)
+ GET /admin/users 200 in 669ms
+ ○ Compiling /api/admin/users ...
+ ✓ Compiled /api/admin/users in 825ms (1056 modules)
+ GET /api/admin/users?limit=50 200 in 1151ms
+ GET /apple-touch-icon.png 404 in 760ms
+ GET /api/admin/users?limit=50 200 in 17ms
+ ○ Compiling /admin/reviews ...
+ ✓ Compiled /admin/reviews in 608ms (1063 modules)
+ GET /admin/reviews 200 in 728ms
+ ○ Compiling /api/admin/reviews ...
+ ✓ Compiled /api/admin/reviews in 868ms (1065 modules)
+ GET /api/admin/reviews?limit=50 200 in 1225ms
+ GET /apple-touch-icon.png 404 in 826ms
+ GET /api/admin/reviews?limit=50 200 in 18ms
+ ○ Compiling /admin/articles ...
+ ✓ Compiled /admin/articles in 1191ms (1072 modules)
+ GET /admin/articles 200 in 1341ms
+ ○ Compiling /api/admin/articles ...
+ ✓ Compiled /api/admin/articles in 618ms (1074 modules)
+ GET /api/admin/articles?limit=50 200 in 726ms
+ GET /api/admin/articles?limit=50 200 in 16ms
+ ○ Compiling /admin/past-tours ...
+ ✓ Compiled /admin/past-tours in 707ms (1081 modules)
+ GET /admin/past-tours 200 in 838ms
+ ○ Compiling /api/admin/past-tours ...
+ ✓ Compiled /api/admin/past-tours in 1026ms (1083 modules)
+ GET /api/admin/past-tours 200 in 1874ms
+ GET /api/admin/tours?limit=100 200 in 1881ms
+ GET /apple-touch-icon.png 404 in 1342ms
+ GET /api/admin/past-tours 200 in 23ms
+ GET /api/admin/tours?limit=100 200 in 28ms
+ ○ Compiling /tours ...
+ ✓ Compiled /tours in 949ms (1090 modules)
+ GET /tours 200 in 1081ms
+ ○ Compiling /api/tours ...
+ ✓ Compiled /api/tours in 1093ms (1092 modules)
+ GET /api/tours? 200 in 1491ms
+ GET /apple-touch-icon.png 404 in 1345ms
+ GET /api/tours? 200 in 14ms
+ GET /tours/caspian-sea-nature 200 in 85ms
+ ○ Compiling /api/tours/[slug] ...
+ ✓ Compiled /api/tours/[slug] in 786ms (677 modules)
+ GET /api/tours/caspian-sea-nature 200 in 916ms
+ ○ Compiling /api/tours/[slug]/past-tours ...
+ ✓ Compiled /api/tours/[slug]/past-tours in 714ms (679 modules)
+ GET /api/tours/caspian-sea-nature 200 in 1403ms
+ GET /api/tours/caspian-sea-nature/past-tours 200 in 1432ms
+ GET /api/tours/caspian-sea-nature/past-tours 200 in 14ms
+ GET /admin/articles 200 in 126ms
+ GET /api/admin/articles?limit=50 200 in 49ms
+ GET /api/admin/articles?limit=50 200 in 37ms
+ GET /apple-touch-icon.png 404 in 295ms
+ GET /admin/reviews 200 in 62ms
+ GET /api/admin/reviews?limit=50 200 in 31ms
+ GET /api/admin/reviews?limit=50 200 in 14ms
+ GET /apple-touch-icon.png 404 in 71ms
+ GET /admin/users 200 in 52ms
+ GET /api/admin/users?limit=50 200 in 34ms
+ GET /api/admin/users?limit=50 200 in 17ms
+ GET /admin/reviews 200 in 42ms
+ GET /api/admin/reviews?limit=50 200 in 23ms
+ GET /api/admin/reviews?limit=50 200 in 9ms
+ GET /admin/users 200 in 31ms
+ GET /api/admin/users?limit=50 200 in 21ms
+ GET /api/admin/users?limit=50 200 in 17ms
+ GET /admin/users 200 in 30ms
+ GET /admin/bookings 200 in 47ms
+ GET /api/admin/bookings?limit=50 200 in 17ms
+ GET /api/admin/bookings?limit=50 200 in 32ms
+ GET /apple-touch-icon.png 404 in 67ms
+ GET /admin/tour-dates 200 in 41ms
+ GET /api/admin/tours?limit=100 200 in 52ms
+ GET /api/admin/tour-dates?limit=100 200 in 87ms
+ GET /api/admin/tours?limit=100 200 in 45ms
+ GET /api/admin/tour-dates?limit=100 200 in 35ms
+ GET /admin/tours 200 in 53ms
+ GET /api/admin/tours?limit=50 200 in 21ms
+ GET /api/admin/tours?limit=50 200 in 23ms
+ PUT /api/admin/tours 200 in 35ms
+ GET /api/admin/tours?limit=50 200 in 25ms
+ PUT /api/admin/tours 200 in 32ms
+ GET /api/admin/tours?limit=50 200 in 16ms
+ GET /admin/tour-dates 200 in 31ms
+ GET /api/admin/tours?limit=100 200 in 37ms
+ GET /api/admin/tour-dates?limit=100 200 in 45ms
+ GET /api/admin/tours?limit=100 200 in 44ms
+ GET /api/admin/tour-dates?limit=100 200 in 33ms
+ GET /apple-touch-icon.png 404 in 76ms
+ GET /admin/bookings 200 in 37ms
+ GET /api/admin/bookings?limit=50 200 in 18ms
+ GET /api/admin/bookings?limit=50 200 in 17ms
+ GET /admin/users 200 in 27ms
+ GET /api/admin/users?limit=50 200 in 16ms
+ GET /api/admin/users?limit=50 200 in 22ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1563ms (1098 modules)
+ GET / 200 in 2063ms
+ ✓ Compiled in 690ms (434 modules)
+ GET /admin/users 200 in 672ms
+ GET / 200 in 224ms
+ GET / 200 in 70ms
+ GET /admin/users 200 in 80ms
+ ○ Compiling /api/reviews/featured ...
+ ✓ Compiled /api/reviews/featured in 754ms (666 modules)
+ ✓ Compiled in 702ms (434 modules)
+ GET /api/tours 200 in 2019ms
+ GET /api/reviews/featured 200 in 2024ms
+ GET /apple-touch-icon.png 404 in 1918ms
+ GET / 200 in 434ms
+ GET /api/tours 200 in 85ms
+ GET /api/reviews/featured 200 in 85ms
+ GET /admin/users 200 in 441ms
+ GET /tours/hyrcanian-forest-adventure 200 in 92ms
+ ○ Compiling /api/tours/[slug] ...
+ ✓ Compiled /api/tours/[slug] in 727ms (670 modules)
+ ✓ Compiled (675 modules)
+ POST /api/auth/set-cookie 200 in 1598ms
+ POST /api/auth/set-cookie 200 in 1598ms
+ GET /api/tours/hyrcanian-forest-adventure 200 in 1701ms
+ GET /api/auth/me 200 in 1706ms
+ GET /api/auth/me 200 in 29ms
+ ○ Compiling /api/tours/[slug]/past-tours ...
+ ✓ Compiled /api/tours/[slug]/past-tours in 519ms (677 modules)
+ GET /api/tours/hyrcanian-forest-adventure 200 in 1240ms
+ GET /api/tours/hyrcanian-forest-adventure/past-tours 200 in 1260ms
+ GET /api/tours/hyrcanian-forest-adventure/past-tours 200 in 33ms
+ ○ Compiling /api/bookings ...
+ ✓ Compiled /api/bookings in 981ms (738 modules)
+Email not configured - skipping: Booking Confirmed - Hyrcanian Forest Adventure
+ POST /api/bookings 201 in 1240ms
+ ○ Compiling /api/payment/checkout ...
+ ✓ Compiled /api/payment/checkout in 1944ms (1368 modules)
+ POST /api/payment/checkout 200 in 2193ms
+ GET /admin/users 200 in 479ms
+ GET /tours/hyrcanian-forest-adventure 200 in 786ms
+ GET /apple-touch-icon.png 404 in 157ms
+ POST /api/auth/set-cookie 200 in 26ms
+ GET /api/auth/me 200 in 43ms
+ POST /api/auth/set-cookie 200 in 36ms
+ GET /api/tours/hyrcanian-forest-adventure 200 in 42ms
+ GET /api/auth/me 200 in 54ms
+ GET /api/tours/hyrcanian-forest-adventure 200 in 44ms
+ GET /api/tours/hyrcanian-forest-adventure/past-tours 200 in 71ms
+ GET /api/tours/hyrcanian-forest-adventure/past-tours 200 in 23ms
+ GET /admin/bookings 200 in 45ms
+ GET /api/admin/bookings?limit=50 200 in 32ms
+ GET /api/admin/bookings?limit=50 200 in 23ms
+ POST /api/bookings 400 in 43ms
+Email not configured - skipping: Booking Confirmed - Hyrcanian Forest Adventure
+ POST /api/bookings 201 in 58ms
+ POST /api/payment/checkout 200 in 44ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.4s (1663 modules)
+ GET /admin/bookings 404 in 3940ms
+ GET /admin/bookings 200 in 283ms
+ POST /api/auth/set-cookie 200 in 85ms
+ GET /api/auth/me 200 in 144ms
+ GET /api/admin/bookings?limit=50 200 in 24ms
+ GET /api/admin/bookings?limit=50 200 in 25ms
+ GET /apple-touch-icon.png 404 in 70ms
+ GET /tours/hyrcanian-forest-adventure 404 in 132ms
+ GET /apple-touch-icon.png 404 in 123ms
+ POST /api/auth/set-cookie 404 in 201ms
+ GET /api/auth/me 404 in 201ms
+ DELETE /api/auth/set-cookie 404 in 102ms
+ ○ Compiling / ...
+ ✓ Compiled / in 726ms (982 modules)
+ GET / 200 in 1192ms
+ ○ Compiling /api/reviews/featured ...
+ ✓ Compiled /api/reviews/featured in 515ms (984 modules)
+ ✓ Compiled (986 modules)
+ GET /api/tours 200 in 1157ms
+ GET /api/reviews/featured 200 in 1158ms
+ GET /tours/mount-damavand-summit-expedition 200 in 259ms
+ ○ Compiling /api/tours/[slug] ...
+ ✓ Compiled /api/tours/[slug] in 1017ms (989 modules)
+ GET /api/tours/mount-damavand-summit-expedition 200 in 1892ms
+ GET /apple-touch-icon.png 404 in 1597ms
+ GET /api/tours/mount-damavand-summit-expedition 200 in 45ms
+ ○ Compiling /api/tours/[slug]/past-tours ...
+ ✓ Compiled /api/tours/[slug]/past-tours in 658ms (991 modules)
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 819ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 27ms
+ PUT /api/admin/bookings 403 in 59ms
+ PUT /api/admin/bookings 403 in 31ms
+ PUT /api/admin/bookings 403 in 18ms
+ PUT /api/admin/bookings 403 in 22ms
+ PUT /api/admin/bookings 403 in 22ms
+ GET /admin/bookings 200 in 245ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 804ms (738 modules)
+ GET /dashboard 200 in 988ms
+ GET /apple-touch-icon.png 404 in 173ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 590ms (747 modules)
+ GET /login 200 in 757ms
+ ✓ Compiled /api/auth/login in 468ms (756 modules)
+ POST /api/auth/login 200 in 1073ms
+ GET /dashboard 200 in 59ms
+ GET /dashboard 200 in 34ms
+ POST /api/auth/set-cookie 200 in 26ms
+ POST /api/auth/set-cookie 200 in 46ms
+ GET /api/auth/me 200 in 48ms
+ GET /api/auth/me 200 in 8ms
+ ✓ Compiled /api/dashboard/stats in 443ms (758 modules)
+ GET /api/dashboard/stats 200 in 555ms
+ GET /api/dashboard/stats 200 in 10ms
+ POST /api/auth/set-cookie 200 in 19ms
+ POST /api/auth/set-cookie 200 in 29ms
+ GET /api/auth/me 200 in 44ms
+ GET /api/auth/me 200 in 7ms
+ GET /apple-touch-icon.png 404 in 165ms
+ POST /api/auth/set-cookie 200 in 19ms
+ POST /api/auth/set-cookie 200 in 33ms
+ GET /api/auth/me 200 in 36ms
+ GET /api/auth/me 200 in 44ms
+ GET /api/dashboard/stats 200 in 43ms
+ GET /api/dashboard/stats 200 in 19ms
+ GET /admin/bookings 200 in 91ms
+ POST /api/auth/set-cookie 200 in 20ms
+ GET /api/auth/me 200 in 25ms
+ GET /api/admin/bookings?limit=50 200 in 22ms
+ GET /api/admin/bookings?limit=50 200 in 22ms
+ PUT /api/admin/bookings 200 in 40ms
+ GET /api/admin/bookings?limit=50 200 in 28ms
+ PUT /api/admin/bookings 200 in 22ms
+ GET /api/admin/bookings?limit=50 200 in 15ms
+ PUT /api/admin/bookings 200 in 25ms
+ GET /api/admin/bookings?limit=50 200 in 23ms
+ PUT /api/admin/bookings 200 in 36ms
+ GET /api/admin/bookings?limit=50 200 in 30ms
+ GET /login 200 in 44ms
+ GET /apple-touch-icon.png 404 in 108ms
+ POST /api/auth/set-cookie 200 in 183ms
+ POST /api/auth/set-cookie 200 in 216ms
+ GET /api/auth/me 200 in 221ms
+ GET /api/auth/me 200 in 23ms
+ POST /api/auth/login 200 in 500ms
+ GET /dashboard 200 in 36ms
+ GET /dashboard 200 in 29ms
+ POST /api/auth/set-cookie 200 in 15ms
+ POST /api/auth/set-cookie 200 in 30ms
+ GET /api/auth/me 200 in 32ms
+ GET /api/auth/me 200 in 217ms
+ GET /apple-touch-icon.png 404 in 241ms
+ GET /api/dashboard/stats 200 in 236ms
+ GET /api/dashboard/stats 200 in 23ms
+ ○ Compiling /tours ...
+ ✓ Compiled /tours in 685ms (748 modules)
+ GET /tours 200 in 846ms
+ ✓ Compiled /api/tours in 413ms (750 modules)
+ GET /api/tours? 200 in 530ms
+ GET /api/tours? 200 in 18ms
+ GET /tours/mount-damavand-summit-expedition 200 in 211ms
+ ✓ Compiled /api/tours/[slug] in 457ms (753 modules)
+ GET /api/tours/mount-damavand-summit-expedition 200 in 1256ms
+ GET /apple-touch-icon.png 404 in 1063ms
+ ○ Compiling /api/tours/[slug]/past-tours ...
+ ✓ Compiled /api/tours/[slug]/past-tours in 592ms (755 modules)
+ GET /api/tours/mount-damavand-summit-expedition 200 in 1092ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 1115ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 15ms
+ ○ Compiling /api/bookings ...
+ ✓ Compiled /api/bookings in 796ms (804 modules)
+Email not configured - skipping: Booking Confirmed - Mount Damavand Summit Expedition
+ POST /api/bookings 201 in 1013ms
+ ○ Compiling /api/payment/checkout ...
+ ✓ Compiled /api/payment/checkout in 1000ms (1000 modules)
+ POST /api/payment/checkout 200 in 1214ms
+ GET /admin/bookings 200 in 185ms
+ POST /api/auth/set-cookie 200 in 33ms
+ GET /api/auth/me 200 in 45ms
+ GET /api/admin/bookings?limit=50 200 in 15ms
+ GET /api/admin/bookings?limit=50 200 in 88ms
+ GET /apple-touch-icon.png 404 in 112ms
+ GET /tours/mount-damavand-summit-expedition 200 in 193ms
+ POST /api/auth/set-cookie 200 in 51ms
+ GET /apple-touch-icon.png 404 in 121ms
+ POST /api/auth/set-cookie 200 in 69ms
+ GET /api/auth/me 200 in 77ms
+ GET /api/tours/mount-damavand-summit-expedition 200 in 79ms
+ GET /api/auth/me 200 in 25ms
+ GET /api/tours/mount-damavand-summit-expedition 200 in 25ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 49ms
+ GET /api/tours/mount-damavand-summit-expedition/past-tours 200 in 13ms

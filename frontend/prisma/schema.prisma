@@ -7,6 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 // ==========================================
@@ -105,7 +106,7 @@ model Tour {
   requirementsFa String?
   itinerary     String   @default("[]")
   itineraryFa   String?
-  status        String   @default("DRAFT")
+  status        String   @default("PUBLISHED")
   isFeatured    Boolean  @default(false)
   isArchived    Boolean  @default(false)
   averageRating Float   @default(0)

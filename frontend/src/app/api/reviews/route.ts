@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 // POST create review
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }

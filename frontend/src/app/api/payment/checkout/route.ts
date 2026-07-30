@@ -7,7 +7,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 export async function POST(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`payment:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`payment:${clientIP}`, {
       windowMs: 60000,
       maxRequests: 5,
     });
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
@@ -68,6 +68,13 @@ export async function POST(request: Request) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     if (!stripe) {
+      if (process.env.NODE_ENV === "production") {
+        return NextResponse.json(
+          { success: false, error: "Payment not configured" },
+          { status: 503 }
+        );
+      }
+
       await prisma.booking.update({
         where: { id: bookingId },
         data: {

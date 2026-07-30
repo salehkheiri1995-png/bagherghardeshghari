@@ -7,7 +7,7 @@ import { validateEmail, validatePassword, validateName, sanitizeInput } from "@/
 export async function POST(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`register:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`register:${clientIP}`, {
       windowMs: 300000,
       maxRequests: 3,
     });

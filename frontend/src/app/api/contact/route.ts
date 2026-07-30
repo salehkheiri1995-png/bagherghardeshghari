@@ -6,7 +6,7 @@ import { validateEmail, validateMessage, sanitizeInput } from "@/lib/validation"
 export async function POST(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`contact:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`contact:${clientIP}`, {
       windowMs: 60000,
       maxRequests: 5,
     });

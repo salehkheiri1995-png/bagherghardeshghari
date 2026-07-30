@@ -1,8 +1,8 @@
 import { PrismaClient } from "./../src/generated/prisma/client.js";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaLibSQL } from "@prisma/adapter-libsql";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaLibSql({
+const adapter = new PrismaLibSQL({
   url: process.env.DATABASE_URL || "file:./prisma/dev.db",
 });
 const prisma = new PrismaClient({ adapter });

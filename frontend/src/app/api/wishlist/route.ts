@@ -4,7 +4,7 @@ import { extractUserFromRequest } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }

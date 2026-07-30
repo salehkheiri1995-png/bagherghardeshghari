@@ -4,11 +4,12 @@ import { extractUserFromRequest } from "@/lib/auth";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { validateBookingInput, sanitizeInput } from "@/lib/validation";
 import { sendEmail, bookingConfirmationEmail } from "@/lib/email";
+import { SERVICE_PRICES } from "@/lib/constants";
 
 // GET all bookings for current user
 export async function GET(request: Request) {
   try {
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`booking:${clientIP}`, {
+    const rateLimit = await checkRateLimit(`booking:${clientIP}`, {
       windowMs: 60000,
       maxRequests: 5,
     });
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    const authUser = extractUserFromRequest(request);
+    const authUser = await extractUserFromRequest(request);
     if (!authUser) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -92,14 +93,16 @@ export async function POST(request: Request) {
       }
     }
 
-    let totalPrice = (tourDate?.specialPrice || tour.price) * numberOfGuests;
+    const basePrice = (tourDate?.specialPrice || tour.price) * numberOfGuests;
+    let totalPrice = basePrice;
 
-    // Apply coupon discount
     let discountAmount = 0;
+    let couponId: string | null = null;
     if (couponCode) {
       const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
       if (coupon && coupon.isActive && new Date() >= coupon.validFrom && new Date() <= coupon.validUntil) {
         if (!coupon.usageLimit || coupon.usageCount < coupon.usageLimit) {
+          couponId = coupon.id;
           if (coupon.discountType === "PERCENTAGE") {
             discountAmount = totalPrice * (coupon.discountValue / 100);
             if (coupon.maxDiscount && discountAmount > coupon.maxDiscount) {
@@ -108,45 +111,64 @@ export async function POST(request: Request) {
           } else {
             discountAmount = coupon.discountValue;
           }
-          // Update coupon usage
-          await prisma.coupon.update({ where: { id: coupon.id }, data: { usageCount: { increment: 1 } } });
         }
       }
     }
 
-    // Add service costs
-    if (transportService) totalPrice += 50 * numberOfGuests;
-    if (accommodationService) totalPrice += 100 * numberOfGuests;
-    if (insuranceService) totalPrice += 30 * numberOfGuests;
-    if (visaService) totalPrice += 80 * numberOfGuests;
+    if (transportService) totalPrice += SERVICE_PRICES.transport * numberOfGuests;
+    if (accommodationService) totalPrice += SERVICE_PRICES.accommodation * numberOfGuests;
+    if (insuranceService) totalPrice += SERVICE_PRICES.insurance * numberOfGuests;
+    if (visaService) totalPrice += SERVICE_PRICES.visa * numberOfGuests;
 
     const finalPrice = totalPrice - discountAmount;
 
-    const booking = await prisma.booking.create({
-      data: {
-        userId: authUser.userId,
-        tourId,
-        tourDateId: tourDateId || null,
-        numberOfGuests,
-        totalPrice: (tourDate?.specialPrice || tour.price) * numberOfGuests,
-        discountAmount,
-        finalPrice,
-        currency: tour.currency,
-        status: "PENDING",
-        guestName: guestName ? sanitizeInput(guestName) : null,
-        guestEmail: guestEmail ? sanitizeInput(guestEmail) : null,
-        guestPhone: guestPhone ? sanitizeInput(guestPhone) : null,
-        guestCountry: guestCountry ? sanitizeInput(guestCountry) : null,
-        specialRequests: specialRequests ? sanitizeInput(specialRequests) : null,
-        transportService: transportService || false,
-        accommodationService: accommodationService || false,
-        insuranceService: insuranceService || false,
-        visaService: visaService || false,
-        couponCode: couponCode || null,
-      },
-      include: {
-        tour: { select: { title: true, titleEn: true, slug: true } },
-      },
+    const booking = await prisma.$transaction(async (tx) => {
+      const client = tx as typeof prisma;
+      if (tourDateId) {
+        const spotResult = await client.tourDate.updateMany({
+          where: { id: tourDateId, availableSpots: { gte: numberOfGuests } },
+          data: { availableSpots: { decrement: numberOfGuests } },
+        });
+        if (spotResult.count === 0) {
+          throw new Error("NOT_ENOUGH_SPOTS");
+        }
+      }
+
+      if (couponId) {
+        await client.coupon.update({ where: { id: couponId }, data: { usageCount: { increment: 1 } } });
+      }
+
+      await client.tour.update({
+        where: { id: tourId },
+        data: { totalBookings: { increment: 1 } },
+      });
+
+      return client.booking.create({
+        data: {
+          userId: authUser.userId,
+          tourId,
+          tourDateId: tourDateId || null,
+          numberOfGuests,
+          totalPrice,
+          discountAmount,
+          finalPrice,
+          currency: tour.currency,
+          status: "PENDING",
+          guestName: guestName ? sanitizeInput(guestName) : null,
+          guestEmail: guestEmail ? sanitizeInput(guestEmail) : null,
+          guestPhone: guestPhone ? sanitizeInput(guestPhone) : null,
+          guestCountry: guestCountry ? sanitizeInput(guestCountry) : null,
+          specialRequests: specialRequests ? sanitizeInput(specialRequests) : null,
+          transportService: transportService || false,
+          accommodationService: accommodationService || false,
+          insuranceService: insuranceService || false,
+          visaService: visaService || false,
+          couponCode: couponCode || null,
+        },
+        include: {
+          tour: { select: { title: true, titleEn: true, slug: true } },
+        },
+      });
     });
 
     if (guestEmail) {
@@ -169,26 +191,15 @@ export async function POST(request: Request) {
       }
     }
 
-    // Decrement available spots on tour date
-    if (tourDateId && tourDate) {
-      await prisma.tourDate.update({
-        where: { id: tourDateId },
-        data: { availableSpots: { decrement: numberOfGuests } },
-      });
-    }
-
-    // Increment total bookings on tour
-    await prisma.tour.update({
-      where: { id: tourId },
-      data: { totalBookings: { increment: 1 } },
-    });
-
     return NextResponse.json({
       success: true,
       data: booking,
       message: "Booking created successfully",
     }, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === "NOT_ENOUGH_SPOTS") {
+      return NextResponse.json({ success: false, error: "Not enough spots available" }, { status: 400 });
+    }
     console.error("Create booking error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
