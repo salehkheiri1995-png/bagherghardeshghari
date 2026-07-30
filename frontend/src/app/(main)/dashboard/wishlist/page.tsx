@@ -17,7 +17,7 @@ interface WishlistItem {
 const typeLabels: Record<string, string> = { MOUNTAIN: "Mountaineering", FOREST: "Forest", CITY: "City Tour", VILLAGE: "Village", NATURE: "Nature" };
 
 export default function WishlistPage() {
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const { token } = useAuth();
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -78,7 +78,7 @@ export default function WishlistPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-emerald-600">${item.tour.price}</span>
+                  <span className="text-lg font-bold text-emerald-600">{formatCurrency(item.tour.price)}</span>
                   <Link href={`/tours/${item.tour.slug}`} className="px-4 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
                     {t.common.viewDetails}
                   </Link>

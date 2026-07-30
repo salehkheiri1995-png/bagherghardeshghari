@@ -2,6 +2,8 @@ export function cn(...inputs: (string | undefined | null | false)[]) {
   return inputs.filter(Boolean).join(" ");
 }
 
+const USD_TO_TOMAN = 60000;
+
 export function formatCurrency(amount: number, currency: string = "USD"): string {
   const formatters: Record<string, Intl.NumberFormat> = {
     USD: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }),
@@ -10,6 +12,14 @@ export function formatCurrency(amount: number, currency: string = "USD"): string
     JPY: new Intl.NumberFormat("ja-JP", { style: "currency", currency: "JPY" }),
   };
   return formatters[currency]?.format(amount) || `${currency} ${amount.toLocaleString()}`;
+}
+
+export function formatPrice(amount: number, locale: string = "en"): string {
+  if (locale === "fa") {
+    const toman = Math.round(amount * USD_TO_TOMAN);
+    return `${toman.toLocaleString("fa-IR")} تومان`;
+  }
+  return `$${amount.toLocaleString("en-US")}`;
 }
 
 export function formatDate(date: Date | string, locale: string = "en"): string {

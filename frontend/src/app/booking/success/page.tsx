@@ -20,7 +20,7 @@ export default function BookingSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const bookingId = searchParams.get("booking_id");
-  const { t } = useI18n();
+  const { t, formatCurrency } = useI18n();
   const [booking, setBooking] = useState<BookingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -111,7 +111,7 @@ export default function BookingSuccessPage() {
                   <p className="font-semibold text-gray-900">{booking.tour.titleEn || booking.tour.title}</p>
                   <p className="text-sm text-gray-600">{booking.numberOfGuests} {t.booking.totalGuests}</p>
                   <p className="text-lg font-bold text-emerald-600 mt-2">
-                    ${booking.finalPrice} {booking.currency}
+                    {formatCurrency(booking.finalPrice)}
                   </p>
                 </div>
               )}

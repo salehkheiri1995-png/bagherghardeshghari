@@ -46,7 +46,7 @@ async function verifyJwt(token: string): Promise<{ userId: string; email: string
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isPublicApiRoute(pathname)) {

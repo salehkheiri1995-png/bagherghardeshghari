@@ -19,6 +19,7 @@ interface TourItem {
   difficulty: string;
   durationDays: number;
   price: number;
+  priceToman: number | null;
   capacity: number;
   location: string;
   averageRating: number;
@@ -52,7 +53,7 @@ const typeLabelKeys: Record<string, string> = {
 };
 
 export default function ToursPage() {
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState({ type: "", province: "", difficulty: "", duration: "", search: "" });
@@ -176,7 +177,7 @@ export default function ToursPage() {
                       <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500" />
                     )}
                     <div className="absolute top-3 left-3"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${difficultyColors[tour.difficulty]}`}>{t.tours[difficultyLabels[tour.difficulty] as keyof typeof t.tours]}</span></div>
-                    <div className="absolute bottom-3 right-3 bg-white/90 px-2.5 py-1 rounded-full"><span className="text-sm font-bold text-emerald-600">${tour.price}</span></div>
+                    <div className="absolute bottom-3 right-3 bg-white/90 px-2.5 py-1 rounded-full"><span className="text-sm font-bold text-emerald-600">{formatCurrency(tour.price, undefined, tour.priceToman)}</span></div>
                     {tour.isFeatured && <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full text-xs font-medium">{t.tours.featured}</div>}
                   </div>
                   <div className="p-5">
@@ -224,7 +225,7 @@ export default function ToursPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-xl font-bold text-emerald-600">${tour.price}</span>
+                      <span className="text-xl font-bold text-emerald-600">{formatCurrency(tour.price, undefined, tour.priceToman)}</span>
                       <span className="text-sm text-gray-500">{t.common.perPerson}</span>
                     </div>
                   </div>

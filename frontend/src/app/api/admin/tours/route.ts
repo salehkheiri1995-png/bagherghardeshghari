@@ -55,10 +55,10 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const {
-      title, titleEn, titleFa, type, difficulty, durationDays, price, capacity,
+      title, titleEn, titleFa, type, difficulty, durationDays, price, priceToman, capacity,
       location, province, description, descriptionEn, descriptionFa,
       includes, includesFa, excludes, excludesFa, requirements, requirementsFa, itinerary, itineraryFa,
-      imageUrl, latitude, longitude, status,
+      imageUrl, latitude, longitude,
     } = body;
 
     if (!title || !titleEn || !type || !price || !capacity) {
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     const tour = await prisma.tour.create({
       data: {
         title, titleEn, titleFa: titleFa || "", slug, type, difficulty: difficulty || "MODERATE",
-        durationDays: durationDays || 1, price, capacity,
+        durationDays: durationDays || 1, price, priceToman: priceToman || null, capacity,
         location: location || "", province: province || "",
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,

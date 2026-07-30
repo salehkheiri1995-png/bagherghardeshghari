@@ -44,6 +44,7 @@ export async function GET(request: Request) {
         difficulty: true,
         durationDays: true,
         price: true,
+        priceToman: true,
         capacity: true,
         location: true,
         province: true,

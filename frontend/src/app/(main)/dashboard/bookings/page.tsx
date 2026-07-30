@@ -27,7 +27,7 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function BookingsPage() {
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const { token } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -81,7 +81,7 @@ export default function BookingsPage() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyles[booking.status] || "bg-gray-100 text-gray-800"}`}>{booking.status}</span>
-                        <span className="text-lg font-bold text-gray-900">${booking.finalPrice}</span>
+                        <span className="text-lg font-bold text-gray-900">{formatCurrency(booking.finalPrice)}</span>
                       </div>
                     </div>
                     <div className="mt-4 flex gap-2">

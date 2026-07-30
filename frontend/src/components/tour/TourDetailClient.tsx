@@ -22,7 +22,7 @@ interface TourDate {
 
 interface TourData {
   id: string; title: string; titleEn: string; titleFa: string; slug: string;
-  type: string; difficulty: string; durationDays: number; price: number; discountPrice: number | null;
+  type: string; difficulty: string; durationDays: number; price: number; priceToman: number | null; discountPrice: number | null;
   currency: string; capacity: number; location: string; province: string; city: string | null;
   description: string; descriptionEn: string; descriptionFa: string;
   includes: string[]; includesFa: string[]; excludes: string[]; excludesFa: string[];
@@ -54,7 +54,7 @@ const difficultyColors: Record<string, string> = {
 export default function TourDetailClient() {
   const params = useParams();
   const slug = params.slug as string;
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const { user, token } = useAuth();
   const router = useRouter();
@@ -370,10 +370,10 @@ export default function TourDetailClient() {
               <div className="sticky top-24 space-y-6">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-bold text-emerald-600">${totalPrice}</span>
+                    <span className="text-3xl font-bold text-emerald-600">{formatCurrency(totalPrice, undefined, tour.priceToman ? tour.priceToman * guests : null)}</span>
                     <span className="text-gray-500">{t.tourDetail.total}</span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-4">${datePrice} {t.common.perPerson} &bull; {guests} {t.common.guests}</p>
+                  <p className="text-sm text-gray-500 mb-4">{formatCurrency(datePrice, undefined, tour.priceToman)} {t.common.perPerson} &bull; {guests} {t.common.guests}</p>
                   <div className="space-y-4 mb-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.tourDetail.selectDate}</label>
@@ -381,7 +381,7 @@ export default function TourDetailClient() {
                         <select value={selectedDateId} onChange={(e) => setSelectedDateId(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm">
                           {safeTourDates.map((date) => (
                             <option key={date.id} value={date.id}>
-                              {new Date(date.startDate).toLocaleDateString()} - {new Date(date.endDate).toLocaleDateString()} ({date.availableSpots} {t.common.spotsLeft}){date.specialPrice ? ` - $${date.specialPrice}` : ""}
+                              {new Date(date.startDate).toLocaleDateString()} - {new Date(date.endDate).toLocaleDateString()} ({date.availableSpots} {t.common.spotsLeft}){date.specialPrice ? ` - ${formatCurrency(date.specialPrice, undefined, tour.priceToman)}` : ""}
                             </option>
                           ))}
                         </select>
@@ -438,8 +438,8 @@ export default function TourDetailClient() {
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">{t.booking.phone}</label><input type="tel" name="phone" value={bookingForm.phone} onChange={handleBookingFormChange} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">{t.booking.country}</label><input type="text" name="country" value={bookingForm.country} onChange={handleBookingFormChange} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" /></div>
                 <div className="border-t border-gray-100 pt-4">
-                  <div className="flex justify-between text-sm mb-2"><span className="text-gray-500">{t.booking.tourPrice} ({guests}x)</span><span className="font-medium">${datePrice * guests}</span></div>
-                  <div className="flex justify-between font-semibold text-lg"><span>{t.common.total}</span><span className="text-emerald-600">${totalPrice}</span></div>
+                  <div className="flex justify-between text-sm mb-2"><span className="text-gray-500">{t.booking.tourPrice} ({guests}x)</span><span className="font-medium">{formatCurrency(datePrice * guests, undefined, tour.priceToman ? tour.priceToman * guests : null)}</span></div>
+                  <div className="flex justify-between font-semibold text-lg"><span>{t.common.total}</span><span className="text-emerald-600">{formatCurrency(totalPrice, undefined, tour.priceToman ? tour.priceToman * guests : null)}</span></div>
                 </div>
                 {bookingError && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{bookingError}</p>}
                 <button onClick={handleProceedToPayment} disabled={bookingLoading} className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">

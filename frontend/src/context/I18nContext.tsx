@@ -34,6 +34,8 @@ const currencyMap: Record<Locale, string> = {
   es: "EUR",
 };
 
+const USD_TO_TOMAN = 60000;
+
 const translations: Record<string, Messages> = {
   en,
   fa: fa as unknown as Messages,
@@ -52,7 +54,7 @@ interface I18nContextType {
   isRtl: boolean;
   dir: "ltr" | "rtl";
   /** قیمت رو بر اساس locale فعلی فرمت می‌کنه */
-  formatCurrency: (amount: number, currency?: string) => string;
+  formatCurrency: (amount: number, currency?: string, priceToman?: number | null) => string;
   /** تاریخ رو بر اساس locale فعلی فرمت می‌کنه */
   formatDate: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) => string;
 }
@@ -88,8 +90,15 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const isRtl = rtlLocales.includes(locale);
 
   const formatCurrency = useCallback(
-    (amount: number, currency?: string): string => {
+    (amount: number, currency?: string, priceToman?: number | null): string => {
       const resolvedCurrency = currency || currencyMap[locale];
+      if (locale === "fa") {
+        if (priceToman && priceToman > 0) {
+          return `${priceToman.toLocaleString("fa-IR")} تومان`;
+        }
+        const toman = Math.round(amount * USD_TO_TOMAN);
+        return `${toman.toLocaleString("fa-IR")} تومان`;
+      }
       try {
         return new Intl.NumberFormat(localeMap[locale], {
           style: "currency",

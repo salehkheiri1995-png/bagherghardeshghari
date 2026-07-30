@@ -26,7 +26,7 @@ interface TourDateItem {
 }
 
 export default function AdminTourDatesPage() {
-  const { t } = useI18n();
+  const { t, formatCurrency } = useI18n();
   const [tourDates, setTourDates] = useState<TourDateItem[]>([]);
   const [tours, setTours] = useState<TourOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -318,7 +318,7 @@ export default function AdminTourDatesPage() {
                 <select name="tourId" value={formData.tourId} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-white" disabled={!!editingDate}>
                   <option value="">{t.admin.selectTour || "Select a tour"}</option>
                   {tours.map((tour) => (
-                    <option key={tour.id} value={tour.id}>{tour.titleEn} (${tour.price})</option>
+                    <option key={tour.id} value={tour.id}>{tour.titleEn} ({formatCurrency(tour.price)})</option>
                   ))}
                 </select>
               </div>

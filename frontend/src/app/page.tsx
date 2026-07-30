@@ -9,7 +9,7 @@ import { useI18n } from "@/context/I18nContext";
 
 interface TourCard {
   id: string; slug: string; title: string; titleFa: string; titleEn: string;
-  type: string; difficulty: string; durationDays: number; price: number;
+  type: string; difficulty: string; durationDays: number; price: number; priceToman: number | null;
   averageRating: number; totalReviews: number; province: string; imageUrl: string | null;
 }
 
@@ -35,7 +35,7 @@ const typeLabelKeys: Record<string, string> = {
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const [popularTours, setPopularTours] = useState<TourCard[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -201,7 +201,7 @@ export default function HomePage() {
                         <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500" />
                       )}
                       <div className="absolute top-3 left-3"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${difficultyColors[tour.difficulty]}`}>{t.tours[difficultyLabels[tour.difficulty] as keyof typeof t.tours]}</span></div>
-                      <div className="absolute bottom-3 right-3 bg-white/90 px-2.5 py-1 rounded-full"><span className="text-sm font-bold text-emerald-600">${tour.price}</span></div>
+                      <div className="absolute bottom-3 right-3 bg-white/90 px-2.5 py-1 rounded-full"><span className="text-sm font-bold text-emerald-600">{formatCurrency(tour.price, undefined, tour.priceToman)}</span></div>
                     </div>
                     <div className="p-5">
                       <div className="flex items-center gap-2 mb-2">

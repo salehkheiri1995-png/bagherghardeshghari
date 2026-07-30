@@ -26,6 +26,7 @@ interface TourItem {
   location: string;
   durationDays: number;
   price: number;
+  priceToman: number | null;
   capacity: number;
   status: string;
   slug: string;
@@ -63,16 +64,25 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminToursPage() {
-  const { t, locale } = useI18n();
+  const { t, locale, formatCurrency } = useI18n();
   const isFa = locale === "fa";
   const [tours, setTours] = useState<TourItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingTour, setEditingTour] = useState<TourItem | null>(null);
   const [activeTab, setActiveTab] = useState<"en" | "fa" | "itinerary">("en");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    titleEn: string; titleFa: string;
+    type: string; difficulty: string; province: string; durationDays: number;
+    price: number; priceToman: number | null; capacity: number;
+    descriptionEn: string; descriptionFa: string;
+    includes: string; includesFa: string;
+    excludes: string; excludesFa: string;
+    requirements: string; requirementsFa: string;
+    imageUrl: string; location: string; latitude: string; longitude: string; status: string;
+  }>({
     titleEn: "", titleFa: "",
-    type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, capacity: 15,
+    type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
     descriptionEn: "", descriptionFa: "",
     includes: "", includesFa: "",
     excludes: "", excludesFa: "",
@@ -116,7 +126,12 @@ export default function AdminToursPage() {
   useEffect(() => { fetchTours(); }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "priceToman") {
+      setFormData({ ...formData, priceToman: value === "" ? null : Number(value) });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const openCreateModal = () => {
@@ -124,7 +139,7 @@ export default function AdminToursPage() {
     setActiveTab("en");
     setFormData({
       titleEn: "", titleFa: "",
-      type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, capacity: 15,
+      type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
       descriptionEn: "", descriptionFa: "",
       includes: "", includesFa: "", excludes: "", excludesFa: "",
       requirements: "", requirementsFa: "", location: "", imageUrl: "",
@@ -141,7 +156,7 @@ export default function AdminToursPage() {
     setFormData({
       titleEn: tour.titleEn, titleFa: tour.titleFa || "",
       type: tour.type, difficulty: tour.difficulty, province: tour.province,
-      durationDays: tour.durationDays, price: tour.price, capacity: tour.capacity,
+      durationDays: tour.durationDays, price: tour.price, priceToman: tour.priceToman ?? null, capacity: tour.capacity,
       descriptionEn: tour.descriptionEn, descriptionFa: tour.descriptionFa || "",
       includes: (tour.includes || []).join("\n"),
       includesFa: (tour.includesFa || []).join("\n"),
@@ -229,6 +244,7 @@ export default function AdminToursPage() {
       province: formData.province,
       durationDays: Number(formData.durationDays),
       price: Number(formData.price),
+      priceToman: formData.priceToman ? Number(formData.priceToman) : null,
       capacity: Number(formData.capacity),
       location: formData.location,
       latitude: formData.latitude ? parseFloat(formData.latitude) : null,
@@ -336,7 +352,7 @@ export default function AdminToursPage() {
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded font-medium">{typeLabels[tour.type] || tour.type}</span></td>
                     <td className="px-6 py-4 text-sm text-gray-600">{tour.province}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{tour.durationDays} {t.common.days}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${tour.price}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(tour.price)}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{tour._count?.bookings || 0}</td>
                     <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[tour.status] || "bg-gray-100 text-gray-800"}`}>{tour.status}</span></td>
                     <td className="px-6 py-4">
@@ -579,8 +595,12 @@ export default function AdminToursPage() {
                       <input type="number" name="durationDays" value={formData.durationDays} onChange={handleChange} min="1" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.price} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.price} (USD) *</label>
                       <input type="number" name="price" value={formData.price} onChange={handleChange} min="0" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">قیمت (تومان) — اختیاری</label>
+                      <input type="number" name="priceToman" value={formData.priceToman ?? ""} onChange={handleChange} min="0" placeholder="خالی = تبدیل خودکار از دلار" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4">

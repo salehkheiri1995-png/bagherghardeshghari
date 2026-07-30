@@ -21,6 +21,7 @@ export async function GET(
         difficulty: true,
         durationDays: true,
         price: true,
+        priceToman: true,
         discountPrice: true,
         currency: true,
         capacity: true,

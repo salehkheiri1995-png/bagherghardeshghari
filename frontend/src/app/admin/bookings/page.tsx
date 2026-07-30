@@ -26,7 +26,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminBookingsPage() {
-  const { t } = useI18n();
+  const { t, formatCurrency } = useI18n();
   const [bookings, setBookings] = useState<BookingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
@@ -161,7 +161,7 @@ export default function AdminBookingsPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">{booking.tour?.titleEn || "—"}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{booking.numberOfGuests}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${booking.finalPrice}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(booking.finalPrice)}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{booking.paymentMethod || "—"}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[booking.status] || "bg-gray-100 text-gray-800"}`}>{booking.status}</span>
