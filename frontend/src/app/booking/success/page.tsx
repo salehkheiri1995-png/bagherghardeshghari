@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
@@ -16,7 +16,7 @@ interface BookingData {
   currency: string;
 }
 
-export default function BookingSuccessPage() {
+function BookingSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const bookingId = searchParams.get("booking_id");
@@ -130,5 +130,21 @@ export default function BookingSuccessPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function BookingSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+        </main>
+        <Footer />
+      </div>
+    }>
+      <BookingSuccessContent />
+    </Suspense>
   );
 }
