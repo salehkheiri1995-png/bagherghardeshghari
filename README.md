@@ -2,6 +2,18 @@
 
 # 🌍 پلتفرم گردشگری VisitIran
 
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css)
+![SQLite](https://img.shields.io/badge/SQLite-LibSQL-003B57?style=for-the-badge&logo=sqlite)
+![Stripe](https://img.shields.io/badge/Stripe-Payment-6772E5?style=for-the-badge&logo=stripe)
+![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)
+
+</div>
+
 یک پلتفرم کامل و مدرن برای رزرو تور و گردشگری در ایران — ساخته‌شده با **Next.js 16**، **TypeScript**، **Prisma ORM** و **SQLite/LibSQL**.
 
 این پروژه تمام زیرساخت‌های لازم برای یک سایت گردشگری حرفه‌ای را دارد: از مرور تورها و رزرو آنلاین، تا پرداخت Stripe، پنل ادمین کامل، داشبورد کاربری، نقشه تعاملی و پشتیبانی از ۶ زبان مختلف.
@@ -21,6 +33,7 @@
 - [دستورات دیتابیس](#️-دستورات-دیتابیس)
 - [متغیرهای محیطی](#-متغیرهای-محیطی)
 - [نقش‌های کاربری](#-نقشهای-کاربری)
+- [مشارکت در توسعه](#-مشارکت-در-توسعه)
 
 ---
 
@@ -339,6 +352,20 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 | `GUIDE` | تمام دسترسی‌های USER + ایجاد و مدیریت تورهای خود |
 | `ADMIN` | تمام دسترسی‌های GUIDE + پنل ادمین کامل |
 | `SUPER_ADMIN` | دسترسی کامل به تمام بخش‌ها بدون محدودیت |
+
+---
+
+## 🤝 مشارکت در توسعه
+
+برای مشارکت در توسعه این پروژه مراحل زیر را دنبال کنید:
+
+1. ریپوزیتوری را **Fork** کنید
+2. یک branch جدید بسازید: `git checkout -b feature/my-feature`
+3. تغییرات خود را commit کنید: `git commit -m 'feat: add my feature'`
+4. branch را push کنید: `git push origin feature/my-feature`
+5. یک **Pull Request** باز کنید
+
+> لطفاً قبل از ارسال PR، مطمئن شوید کدتان از ESLint بدون خطا رد می‌شود.
 
 ---
 
