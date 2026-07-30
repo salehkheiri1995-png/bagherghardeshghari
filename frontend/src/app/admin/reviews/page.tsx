@@ -64,7 +64,7 @@ export default function AdminReviewsPage() {
   };
 
   const handleDelete = async (reviewId: string) => {
-    if (!confirm("Are you sure you want to delete this review?")) return;
+    if (!confirm(t.admin.areYouSureDeleteReview)) return;
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`/api/admin/reviews?reviewId=${reviewId}`, {
@@ -114,7 +114,7 @@ export default function AdminReviewsPage() {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="font-semibold text-gray-900">{review.user?.name || "Anonymous"}</span>
+                  <span className="font-semibold text-gray-900">{review.user?.name || t.admin.anonymous}</span>
                   {review.isVerified && <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">{t.common.verified}</span>}
                   {!review.isApproved && <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">{t.common.pendingApproval}</span>}
                   <span className="text-sm text-gray-400">&bull;</span>
@@ -129,8 +129,8 @@ export default function AdminReviewsPage() {
                 </div>
                 <h4 className="font-medium text-gray-900 mb-1">{review.title}</h4>
                 <p className="text-gray-600 text-sm">{review.comment}</p>
-                {review.pros && <p className="text-sm text-green-700 mt-1"><span className="font-medium">Pros:</span> {review.pros}</p>}
-                {review.cons && <p className="text-sm text-red-600 mt-1"><span className="font-medium">Cons:</span> {review.cons}</p>}
+                {review.pros && <p className="text-sm text-green-700 mt-1"><span className="font-medium">{t.admin.pros}</span> {review.pros}</p>}
+                {review.cons && <p className="text-sm text-red-600 mt-1"><span className="font-medium">{t.admin.cons}</span> {review.cons}</p>}
               </div>
               <div className="flex items-center gap-2 ml-4">
                 {!review.isApproved && (

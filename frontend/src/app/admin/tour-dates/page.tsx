@@ -126,7 +126,7 @@ export default function AdminTourDatesPage() {
 
   const handleSubmit = async () => {
     if (!formData.tourId || !formData.startDate || !formData.endDate) {
-      alert("Tour, start date, and end date are required");
+      alert(t.admin.requiredFields);
       return;
     }
 
@@ -162,7 +162,7 @@ export default function AdminTourDatesPage() {
         setShowModal(false);
         fetchTourDates(selectedTourId);
       } else {
-        alert(data.error || "Failed to save tour date");
+        alert(data.error || t.admin.failedToSaveTourDate);
       }
     } catch (err) {
       console.error("Save tour date error:", err);
@@ -170,7 +170,7 @@ export default function AdminTourDatesPage() {
   };
 
   const handleDelete = async (tourDateId: string) => {
-    if (!confirm("Are you sure you want to delete this tour date?")) return;
+    if (!confirm(t.admin.areYouSureDeleteTourDate)) return;
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`/api/admin/tour-dates?tourDateId=${tourDateId}`, {
@@ -181,7 +181,7 @@ export default function AdminTourDatesPage() {
       if (data.success) {
         fetchTourDates(selectedTourId);
       } else {
-        alert(data.error || "Failed to delete");
+        alert(data.error || t.admin.failedToDelete);
       }
     } catch (err) {
       console.error("Delete tour date error:", err);
@@ -244,7 +244,7 @@ export default function AdminTourDatesPage() {
                   <th className="px-6 py-3">{t.admin.startDate}</th>
                   <th className="px-6 py-3">{t.admin.endDate}</th>
                   <th className="px-6 py-3">{t.common.days}</th>
-                  <th className="px-6 py-3">{t.admin.capacity || "Capacity"}</th>
+                  <th className="px-6 py-3">{t.admin.capacity}</th>
                   <th className="px-6 py-3">{t.common.spotsLeft}</th>
                   <th className="px-6 py-3">{t.common.bookings}</th>
                   <th className="px-6 py-3">{t.common.status}</th>
@@ -255,9 +255,13 @@ export default function AdminTourDatesPage() {
                 {tourDates.map((date) => {
                   const start = new Date(date.startDate);
                   const end = new Date(date.endDate);
+                  const now = new Date();
                   const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+                  const isCompleted = end < now;
+                  const isOngoing = start <= now && end >= now;
+                  const isUpcoming = start > now;
                   return (
-                    <tr key={date.id} className="hover:bg-gray-50">
+                    <tr key={date.id} className={`hover:bg-gray-50 ${isCompleted ? "bg-gray-50/60 opacity-70" : ""}`}>
                       <td className="px-6 py-4">
                         <p className="text-sm font-medium text-gray-900">{date.tour.titleEn}</p>
                         {date.tour.titleFa && <p className="text-xs text-gray-400" dir="rtl">{date.tour.titleFa}</p>}
@@ -273,12 +277,20 @@ export default function AdminTourDatesPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{date._count?.bookings || 0}</td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleToggleActive(date)}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${date.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}
-                        >
-                          {date.isActive ? t.common.active : t.common.inactive}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                            isCompleted ? "bg-gray-200 text-gray-600" :
+                            isOngoing ? "bg-blue-100 text-blue-700" :
+                            "bg-green-100 text-green-700"
+                          }`}>
+                            {isCompleted ? t.admin.dateCompleted : isOngoing ? t.admin.dateOngoing : t.admin.dateUpcoming}
+                          </span>
+                          {!date.isActive && (
+                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-600">
+                              {t.common.inactive}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
@@ -316,7 +328,7 @@ export default function AdminTourDatesPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.tour} *</label>
                 <select name="tourId" value={formData.tourId} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-white" disabled={!!editingDate}>
-                  <option value="">{t.admin.selectTour || "Select a tour"}</option>
+                  <option value="">{t.admin.selectTour}</option>
                   {tours.map((tour) => (
                     <option key={tour.id} value={tour.id}>{tour.titleEn} ({formatCurrency(tour.price)})</option>
                   ))}
@@ -349,7 +361,7 @@ export default function AdminTourDatesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.specialPrice || "Special Price (optional)"}</label>
-                <input type="number" name="specialPrice" value={formData.specialPrice} onChange={handleChange} min="0" step="0.01" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" placeholder="Leave empty for regular price" />
+                <input type="number" name="specialPrice" value={formData.specialPrice} onChange={handleChange} min="0" step="0.01" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" placeholder={t.admin.leaveEmptyForRegularPrice} />
               </div>
 
               <div>

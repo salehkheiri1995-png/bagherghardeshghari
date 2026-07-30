@@ -50,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div>
             <span className="text-lg font-bold text-white">Visit<span className="text-emerald-400">Iran</span></span>
-            <p className="text-xs text-gray-400">Admin Panel</p>
+            <p className="text-xs text-gray-400">{t.admin.adminPanel}</p>
           </div>
         </div>
         <nav className="px-3 py-4 space-y-1">

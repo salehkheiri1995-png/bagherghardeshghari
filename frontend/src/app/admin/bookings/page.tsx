@@ -78,7 +78,7 @@ export default function AdminBookingsPage() {
   };
 
   const exportCSV = () => {
-    const headers = ["ID", "User", "Tour", "Date", "Guests", "Amount", "Status", "Payment"];
+    const headers = [t.admin.csvHeaderId, t.admin.csvHeaderUser, t.admin.csvHeaderTour, t.admin.csvHeaderDate, t.admin.csvHeaderGuests, t.admin.csvHeaderAmount, t.admin.csvHeaderStatus, t.admin.csvHeaderPayment];
     const rows = bookings.map((b) => [
       b.id,
       b.user?.name || b.guestName || "",

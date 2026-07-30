@@ -387,14 +387,14 @@ export default function AdminToursPage() {
             <div className="px-6 py-3 border-b border-gray-100 flex gap-2 sticky top-[65px] bg-white z-10">
               {(["en", "fa", "itinerary"] as const).map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab ? "bg-emerald-100 text-emerald-700" : "text-gray-500 hover:bg-gray-100"}`}>
-                  {tab === "en" ? "English" : tab === "fa" ? "فارسی" : t.admin.itinerary || "Itinerary"}
+                  {tab === "en" ? t.admin.englishTab : tab === "fa" ? t.admin.farsiTab : t.admin.itineraryTab}
                 </button>
               ))}
             </div>
 
             <div className="p-6 space-y-4">
               <div className="border border-gray-200 rounded-xl p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tour Image</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t.admin.tourImage}</label>
                 <div className="flex items-start gap-4">
                   {formData.imageUrl ? (
                     <div className="relative">
@@ -410,15 +410,15 @@ export default function AdminToursPage() {
                       ) : (
                         <>
                           <svg className="w-8 h-8 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                          <span className="text-xs text-gray-500">Upload Image</span>
+                          <span className="text-xs text-gray-500">{t.admin.uploadImage}</span>
                         </>
                       )}
                       <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                     </label>
                   )}
                   <div className="text-xs text-gray-400">
-                    <p>JPG, PNG or WebP. Max 5MB.</p>
-                    <p className="mt-1">Recommended: 800x600px</p>
+                    <p>{t.admin.imageFormat}</p>
+                    <p className="mt-1">{t.admin.imageRecommended}</p>
                   </div>
                 </div>
               </div>
@@ -426,23 +426,23 @@ export default function AdminToursPage() {
               {activeTab === "en" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title (English) *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.titleEn} *</label>
                     <input type="text" name="titleEn" value={formData.titleEn} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.descriptionEn}</label>
                     <textarea name="descriptionEn" value={formData.descriptionEn} onChange={handleChange} rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm resize-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Includes (one per line)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.includesHint}</label>
                     <textarea name="includes" value={formData.includes} onChange={handleChange} rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm resize-none font-mono text-xs" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Excludes (one per line)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.excludesHint}</label>
                     <textarea name="excludes" value={formData.excludes} onChange={handleChange} rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm resize-none font-mono text-xs" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Requirements (one per line)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.requirementsHint}</label>
                     <textarea name="requirements" value={formData.requirements} onChange={handleChange} rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm resize-none font-mono text-xs" />
                   </div>
                 </>
@@ -503,8 +503,8 @@ export default function AdminToursPage() {
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">Title (EN)</label>
-                          <input type="text" value={day.title} onChange={(e) => updateDay(index, "title", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" placeholder="e.g. Arrival in Mazandaran" />
+                          <label className="block text-xs font-medium text-gray-500 mb-1">{t.admin.titleEnShort}</label>
+                          <input type="text" value={day.title} onChange={(e) => updateDay(index, "title", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-500 mb-1" dir="rtl">عنوان (FA)</label>
@@ -514,7 +514,7 @@ export default function AdminToursPage() {
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">Description (EN)</label>
+                          <label className="block text-xs font-medium text-gray-500 mb-1">{t.admin.descriptionEnShort}</label>
                           <textarea value={day.description} onChange={(e) => updateDay(index, "description", e.target.value)} rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 resize-none" />
                         </div>
                         <div>
@@ -525,7 +525,7 @@ export default function AdminToursPage() {
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">Activities (EN, one per line)</label>
+                          <label className="block text-xs font-medium text-gray-500 mb-1">{t.admin.activitiesEn}</label>
                           <textarea
                             value={(day.activities || []).join("\n")}
                             onChange={(e) => updateDay(index, "activities", e.target.value)}
@@ -549,8 +549,8 @@ export default function AdminToursPage() {
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">Accommodation (EN)</label>
-                          <input type="text" value={day.accommodation} onChange={(e) => updateDay(index, "accommodation", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" placeholder="e.g. Eco-lodge" />
+                          <label className="block text-xs font-medium text-gray-500 mb-1">{t.admin.accommodationEn}</label>
+                          <input type="text" value={day.accommodation} onChange={(e) => updateDay(index, "accommodation", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-500 mb-1" dir="rtl">اقامت (FA)</label>
@@ -615,20 +615,20 @@ export default function AdminToursPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.common.status || "Status"}</label>
                       <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-white">
-                        <option value="PUBLISHED">PUBLISHED ✅</option>
-                        <option value="DRAFT">DRAFT 📝</option>
-                        <option value="CANCELLED">CANCELLED ❌</option>
+                        <option value="PUBLISHED">{t.admin.statusPublished} ✅</option>
+                        <option value="DRAFT">{t.admin.statusDraft} 📝</option>
+                        <option value="CANCELLED">{t.admin.statusCancelled} ❌</option>
                       </select>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? "عرض جغرافیایی (Latitude)" : "Latitude"}</label>
-                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} placeholder="e.g. 32.6546" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.latitude}</label>
+                      <input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? "طول جغرافیایی (Longitude)" : "Longitude"}</label>
-                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} placeholder="e.g. 51.6680" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.longitude}</label>
+                      <input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
                     </div>
                   </div>
                 </div>
@@ -648,7 +648,7 @@ export default function AdminToursPage() {
   );
 
   async function handleDelete(tourId: string) {
-    if (!confirm("Are you sure you want to delete this tour?")) return;
+    if (!confirm(t.admin.areYouSureDeleteTour)) return;
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`/api/admin/tours?tourId=${tourId}`, {
