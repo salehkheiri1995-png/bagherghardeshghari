@@ -112,7 +112,7 @@ export async function POST(request: Request) {
       ],
       mode: "payment",
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/booking/cancel`,
+      cancel_url: `${baseUrl}/booking/cancel?booking_id=${booking.id}&tour=${tour.slug}`,
       metadata: {
         bookingId: booking.id,
         userId: authUser.userId,
