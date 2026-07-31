@@ -6,8 +6,11 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  // DATABASE_URL (file:./dev.db) resolves relative to schema location (prisma/).
+  // At runtime, PrismaLibSQL resolves relative to CWD (frontend/).
+  // So we always use the schema-relative path for the adapter.
   const adapter = new PrismaLibSQL({
-    url: process.env.DATABASE_URL || "file:./prisma/dev.db",
+    url: "file:./prisma/dev.db",
   });
   return new PrismaClient({ adapter });
 }

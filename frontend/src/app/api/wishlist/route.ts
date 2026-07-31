@@ -16,7 +16,7 @@ export async function GET(request: Request) {
           select: {
             id: true, title: true, titleEn: true, titleFa: true, slug: true,
             type: true, difficulty: true, durationDays: true, price: true,
-            averageRating: true, totalReviews: true, imageUrl: true, province: true,
+            averageRating: true, totalReviews: true, imageUrl: true, provinceRef: { select: { name: true, nameEn: true } },
           },
         },
       },

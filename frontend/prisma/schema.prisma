@@ -114,7 +114,6 @@ model Tour {
   minAge        Int      @default(18)
   maxGroupSize  Int      @default(15)
   location      String
-  province      String
   city          String?
   address       String?
   latitude      Float?
@@ -157,7 +156,6 @@ model Tour {
   @@index([difficulty])
   @@index([status])
   @@index([isFeatured])
-  @@index([province])
   @@index([slug])
 }
 

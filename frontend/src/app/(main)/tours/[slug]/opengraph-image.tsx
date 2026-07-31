@@ -19,11 +19,11 @@ export default async function OGImage({
   try {
     const tour = await prisma.tour.findUnique({
       where: { slug },
-      select: { titleEn: true, province: true, price: true, durationDays: true },
+      select: { titleEn: true, provinceRef: { select: { name: true, nameEn: true } }, price: true, durationDays: true },
     });
     if (tour) {
       title = tour.titleEn;
-      province = tour.province;
+      province = tour.provinceRef?.nameEn || tour.provinceRef?.name || "";
       price = tour.price;
       durationDays = tour.durationDays;
     }

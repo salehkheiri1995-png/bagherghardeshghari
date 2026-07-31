@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       prisma.booking.findMany({
         where,
         include: {
-          tour: { select: { title: true, titleEn: true, slug: true, type: true, durationDays: true, province: true } },
+          tour: { select: { title: true, titleEn: true, slug: true, type: true, durationDays: true, provinceRef: { select: { name: true, nameEn: true } } } },
           tourDate: { select: { startDate: true, endDate: true } },
         },
         orderBy: { createdAt: "desc" },

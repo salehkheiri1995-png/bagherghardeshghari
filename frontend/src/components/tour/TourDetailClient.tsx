@@ -23,7 +23,7 @@ interface TourDate {
 interface TourData {
   id: string; title: string; titleEn: string; titleFa: string; slug: string;
   type: string; difficulty: string; durationDays: number; price: number; priceToman: number | null; discountPrice: number | null;
-  currency: string; capacity: number; location: string; province: string; city: string | null;
+  currency: string; capacity: number; location: string; provinceRef: { name: string; nameEn: string } | null; city: string | null;
   description: string; descriptionEn: string; descriptionFa: string;
   includes: string[]; includesFa: string[]; excludes: string[]; excludesFa: string[];
   requirements: string[]; requirementsFa: string[]; itinerary: ItineraryDay[];
@@ -408,7 +408,7 @@ export default function TourDetailClient() {
                     <div className="flex justify-between"><span className="text-gray-500">{t.tourDetail.maxGroup}</span><span className="font-medium text-gray-900">{tour.capacity}</span></div>
                     <div className="flex justify-between"><span className="text-gray-500">{t.tourDetail.difficulty}</span><span className="font-medium text-gray-900">{difficultyLabel}</span></div>
                     <div className="flex justify-between"><span className="text-gray-500">{t.tourDetail.language}</span><span className="font-medium text-gray-900">{tour.guideLang === "EN" ? t.tours.langEN : t.tours.langFA}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-500">{t.tourDetail.province}</span><span className="font-medium text-gray-900">{tour.province}</span></div>
+                     <div className="flex justify-between"><span className="text-gray-500">{t.tourDetail.province}</span><span className="font-medium text-gray-900">{tour.provinceRef?.nameEn || tour.provinceRef?.name}</span></div>
                   </div>
                 </div>
               </div>

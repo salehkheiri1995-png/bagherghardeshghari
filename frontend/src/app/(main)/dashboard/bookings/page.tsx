@@ -14,7 +14,7 @@ interface Booking {
   currency: string;
   createdAt: string;
   guestName: string | null;
-  tour: { title: string; titleEn: string; slug: string; type: string; durationDays: number; province: string; imageUrl: string | null } | null;
+  tour: { title: string; titleEn: string; slug: string; type: string; durationDays: number; provinceRef: { name: string; nameEn: string } | null; imageUrl: string | null } | null;
   tourDate: { startDate: string; endDate: string } | null;
 }
 

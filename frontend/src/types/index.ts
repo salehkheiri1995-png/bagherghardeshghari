@@ -91,7 +91,7 @@ export interface Tour {
   minAge: number;
   maxGroupSize: number;
   location: string;
-  province: string;
+  provinceRef?: { name: string; nameEn: string } | null;
   city?: string;
   address?: string;
   latitude?: number;
@@ -412,7 +412,7 @@ export interface TourCreateInput {
   minAge?: number;
   maxGroupSize?: number;
   location: string;
-  province: string;
+  provinceRef?: { name: string; nameEn: string } | null;
   city?: string;
   address?: string;
   latitude?: number;

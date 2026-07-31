@@ -26,7 +26,7 @@ export async function GET(
         currency: true,
         capacity: true,
         location: true,
-        province: true,
+        provinceRef: { select: { name: true, nameEn: true } },
         city: true,
         description: true,
         descriptionEn: true,

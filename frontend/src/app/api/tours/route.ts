@@ -14,7 +14,12 @@ export async function GET(request: Request) {
 
     const where: Record<string, unknown> = { status: TourStatus.PUBLISHED };
     if (type) where.type = type;
-    if (province) where.province = province;
+    if (province) {
+      const provinceRecord = await prisma.province.findFirst({
+        where: { OR: [{ name: province }, { nameEn: province }] },
+      });
+      if (provinceRecord) where.provinceId = provinceRecord.id;
+    }
     if (difficulty) where.difficulty = difficulty;
     if (featured === "true") where.isFeatured = true;
     if (duration) {
@@ -28,7 +33,7 @@ export async function GET(request: Request) {
         { title: { contains: search } },
         { titleEn: { contains: search } },
         { titleFa: { contains: search } },
-        { province: { contains: search } },
+        { location: { contains: search } },
         { location: { contains: search } },
       ];
     }
@@ -48,7 +53,7 @@ export async function GET(request: Request) {
         priceToman: true,
         capacity: true,
         location: true,
-        province: true,
+        provinceRef: { select: { name: true, nameEn: true } },
         city: true,
         averageRating: true,
         totalReviews: true,

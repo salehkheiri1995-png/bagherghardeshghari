@@ -14,7 +14,7 @@ interface TourItem {
   titleFa: string;
   slug: string;
   type: string;
-  province: string;
+  provinceRef: { name: string; nameEn: string } | null;
   city: string | null;
   difficulty: string;
   durationDays: number;
@@ -215,7 +215,7 @@ export default function ToursPage() {
                         <span className="text-xs text-gray-400">&bull;</span>
                         <span className="text-xs text-gray-500">{tour.durationDays} {t.common.days}</span>
                         <span className="text-xs text-gray-400">&bull;</span>
-                        <span className="text-xs text-gray-500">{tour.province}</span>
+                        <span className="text-xs text-gray-500">{tour.provinceRef?.nameEn || tour.provinceRef?.name}</span>
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">{isFa ? tour.titleFa : tour.title}</h3>
                       <div className="flex items-center gap-1">

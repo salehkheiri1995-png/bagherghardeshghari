@@ -10,7 +10,7 @@ interface WishlistItem {
   tour: {
     id: string; title: string; titleEn: string; titleFa: string; slug: string;
     type: string; durationDays: number; price: number; averageRating: number;
-    imageUrl: string | null; province: string;
+    imageUrl: string | null; provinceRef: { name: string; nameEn: string } | null;
   };
 }
 

@@ -22,7 +22,7 @@ interface TourItem {
   titleEn: string;
   titleFa: string;
   type: string;
-  province: string;
+  provinceRef: { name: string; nameEn: string } | null;
   location: string;
   durationDays: number;
   price: number;
@@ -73,7 +73,7 @@ export default function AdminToursPage() {
   const [activeTab, setActiveTab] = useState<"en" | "fa" | "itinerary">("en");
   const [formData, setFormData] = useState<{
     titleEn: string; titleFa: string;
-    type: string; difficulty: string; province: string; durationDays: number;
+    type: string; difficulty: string; provinceId: string; durationDays: number;
     price: number; priceToman: number | null; capacity: number;
     descriptionEn: string; descriptionFa: string;
     includes: string; includesFa: string;
@@ -82,7 +82,7 @@ export default function AdminToursPage() {
     imageUrl: string; location: string; latitude: string; longitude: string; status: string;
   }>({
     titleEn: "", titleFa: "",
-    type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
+      type: "CITY", difficulty: "MODERATE", provinceId: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
     descriptionEn: "", descriptionFa: "",
     includes: "", includesFa: "",
     excludes: "", excludesFa: "",
@@ -139,7 +139,7 @@ export default function AdminToursPage() {
     setActiveTab("en");
     setFormData({
       titleEn: "", titleFa: "",
-      type: "CITY", difficulty: "MODERATE", province: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
+    type: "CITY", difficulty: "MODERATE", provinceId: "", durationDays: 3, price: 0, priceToman: null, capacity: 15,
       descriptionEn: "", descriptionFa: "",
       includes: "", includesFa: "", excludes: "", excludesFa: "",
       requirements: "", requirementsFa: "", location: "", imageUrl: "",
@@ -155,7 +155,7 @@ export default function AdminToursPage() {
     setActiveTab("en");
     setFormData({
       titleEn: tour.titleEn, titleFa: tour.titleFa || "",
-      type: tour.type, difficulty: tour.difficulty, province: tour.province,
+      type: tour.type, difficulty: tour.difficulty, provinceId: "",
       durationDays: tour.durationDays, price: tour.price, priceToman: tour.priceToman ?? null, capacity: tour.capacity,
       descriptionEn: tour.descriptionEn, descriptionFa: tour.descriptionFa || "",
       includes: (tour.includes || []).join("\n"),
@@ -241,7 +241,7 @@ export default function AdminToursPage() {
       titleFa: formData.titleFa,
       type: formData.type,
       difficulty: formData.difficulty,
-      province: formData.province,
+      provinceId: formData.provinceId || null,
       durationDays: Number(formData.durationDays),
       price: Number(formData.price),
       priceToman: formData.priceToman ? Number(formData.priceToman) : null,
@@ -350,7 +350,7 @@ export default function AdminToursPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded font-medium">{typeLabels[tour.type] || tour.type}</span></td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{tour.province}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{tour.provinceRef?.nameEn || tour.provinceRef?.name || "-"}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{tour.durationDays} {t.common.days}</td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(tour.price)}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{tour._count?.bookings || 0}</td>
@@ -588,7 +588,10 @@ export default function AdminToursPage() {
                   <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.province}</label>
-                      <input type="text" name="province" value={formData.province} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm" />
+                      <select name="provinceId" value={formData.provinceId} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="">Select province</option>
+                        <option value="placeholder">{t.admin.province}</option>
+                      </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.durationDays}</label>

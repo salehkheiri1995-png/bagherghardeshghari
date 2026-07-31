@@ -16,7 +16,7 @@ export async function generateMetadata(
       description: true,
       imageUrl: true,
       price: true,
-      province: true,
+      provinceRef: { select: { name: true, nameEn: true } },
       type: true,
       durationDays: true,
       averageRating: true,
@@ -35,7 +35,7 @@ export async function generateMetadata(
     description,
     keywords: [
       `Iran ${tour.type.toLowerCase()} tour`,
-      `${tour.province} tour`,
+      `${tour.provinceRef?.nameEn || tour.provinceRef?.name || ""} tour`,
       `Iran travel ${tour.durationDays} days`,
       "Iran guided tour",
       "Visit Iran",

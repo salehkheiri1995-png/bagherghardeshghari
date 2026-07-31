@@ -10,7 +10,7 @@ import { useI18n } from "@/context/I18nContext";
 interface TourCard {
   id: string; slug: string; title: string; titleFa: string; titleEn: string;
   type: string; difficulty: string; durationDays: number; price: number; priceToman: number | null;
-  averageRating: number; totalReviews: number; province: string; imageUrl: string | null;
+  averageRating: number; totalReviews: number; provinceRef: { name: string; nameEn: string } | null; imageUrl: string | null;
 }
 
 interface Testimonial {
