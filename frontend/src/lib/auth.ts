@@ -39,6 +39,8 @@ export async function verifyPassword(
   return bcrypt.compare(password, hashedPassword);
 }
 
+// ⚠️ This function is async and must be called with `await`.
+// Callers who forget `await` will receive the Promise object instead of the token string.
 export async function generateToken(payload: JwtPayload): Promise<string> {
   const secret = getJwtSecret();
   return new SignJWT({ ...payload })
