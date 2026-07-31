@@ -23,6 +23,7 @@ interface TourItem {
   titleFa: string;
   type: string;
   provinceRef: { name: string; nameEn: string } | null;
+  provinceId: string | null;
   location: string;
   durationDays: number;
   price: number;
@@ -95,6 +96,7 @@ export default function AdminToursPage() {
   });
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [provinces, setProvinces] = useState<{ id: string; name: string; nameEn: string }[]>([]);
 
   const fetchTours = async () => {
     try {
@@ -124,6 +126,17 @@ export default function AdminToursPage() {
   };
 
   useEffect(() => { fetchTours(); }, []);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const res = await fetch("/api/provinces");
+        const data = await res.json();
+        if (data.success) setProvinces(data.data);
+      } catch {}
+    };
+    fetchProvinces();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -155,7 +168,7 @@ export default function AdminToursPage() {
     setActiveTab("en");
     setFormData({
       titleEn: tour.titleEn, titleFa: tour.titleFa || "",
-      type: tour.type, difficulty: tour.difficulty, provinceId: "",
+      type: tour.type, difficulty: tour.difficulty, provinceId: tour.provinceId || "",
       durationDays: tour.durationDays, price: tour.price, priceToman: tour.priceToman ?? null, capacity: tour.capacity,
       descriptionEn: tour.descriptionEn, descriptionFa: tour.descriptionFa || "",
       includes: (tour.includes || []).join("\n"),
@@ -589,8 +602,10 @@ export default function AdminToursPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t.admin.province}</label>
                       <select name="provinceId" value={formData.provinceId} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm">
-                        <option value="">Select province</option>
-                        <option value="placeholder">{t.admin.province}</option>
+                        <option value="">{t.admin.province}</option>
+                        {provinces.map((p) => (
+                          <option key={p.id} value={p.id}>{p.nameEn || p.name}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
