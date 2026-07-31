@@ -166,6 +166,7 @@ export async function POST(request: Request) {
           insuranceService: insuranceService || false,
           visaService: visaService || false,
           couponCode: couponCode || null,
+          couponId: couponId || null,
         },
         include: {
           tour: { select: { title: true, titleEn: true, slug: true } },

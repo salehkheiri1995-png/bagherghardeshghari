@@ -262,6 +262,8 @@ model Booking {
   insuranceService      Boolean  @default(false)
   visaService           Boolean  @default(false)
   couponCode            String?
+  couponId              String?
+  coupon                Coupon?  @relation(fields: [couponId], references: [id])
   bookedAt              DateTime @default(now())
   paidAt                DateTime?
   confirmedAt           DateTime?
@@ -426,6 +428,7 @@ model Coupon {
   validUntil    DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  bookings      Booking[]
 
   @@index([code])
   @@index([isActive])
