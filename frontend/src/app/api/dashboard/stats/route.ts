@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
+import { BookingStatus } from "@/generated/prisma/client";
 
 export async function GET(request: Request) {
   try {
@@ -11,13 +12,13 @@ export async function GET(request: Request) {
 
     const [totalBookings, upcomingBookings, wishlistCount, reviewCount] = await Promise.all([
       prisma.booking.count({ where: { userId: authUser.userId } }),
-      prisma.booking.count({ where: { userId: authUser.userId, status: { in: ["CONFIRMED", "PAID"] } } }),
+      prisma.booking.count({ where: { userId: authUser.userId, status: { in: [BookingStatus.CONFIRMED, BookingStatus.COMPLETED] } } }),
       prisma.wishlist.count({ where: { userId: authUser.userId } }),
       prisma.review.count({ where: { userId: authUser.userId } }),
     ]);
 
     const nextBooking = await prisma.booking.findFirst({
-      where: { userId: authUser.userId, status: { in: ["CONFIRMED", "PAID"] } },
+      where: { userId: authUser.userId, status: { in: [BookingStatus.CONFIRMED, BookingStatus.COMPLETED] } },
       include: { tour: { select: { title: true, titleEn: true, slug: true, durationDays: true } }, tourDate: { select: { startDate: true, endDate: true } } },
       orderBy: { createdAt: "asc" },
     });

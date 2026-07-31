@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { TourStatus } from "@/generated/prisma/client";
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search");
     const featured = url.searchParams.get("featured");
 
-    const where: Record<string, unknown> = { status: "PUBLISHED" };
+    const where: Record<string, unknown> = { status: TourStatus.PUBLISHED };
     if (type) where.type = type;
     if (province) where.province = province;
     if (difficulty) where.difficulty = difficulty;

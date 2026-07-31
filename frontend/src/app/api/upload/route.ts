@@ -31,7 +31,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "File too large. Max size: 5MB" }, { status: 400 });
     }
 
-    const ext = file.name.split(".").pop() || "jpg";
+    const mimeToExt: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+    const ext = mimeToExt[file.type] || "jpg";
     const filename = `${randomUUID()}.${ext}`;
     const uploadDir = join(process.cwd(), "public", "uploads", folder);
     const filepath = join(uploadDir, filename);

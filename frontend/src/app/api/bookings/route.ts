@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { BookingStatus } from "@/generated/prisma/client";
 import { extractUserFromRequest } from "@/lib/auth";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { validateBookingInput, sanitizeInput } from "@/lib/validation";
@@ -88,9 +89,6 @@ export async function POST(request: Request) {
       if (!tourDate || !tourDate.isActive) {
         return NextResponse.json({ success: false, error: "Tour date not found or inactive" }, { status: 400 });
       }
-      if (tourDate.availableSpots < numberOfGuests) {
-        return NextResponse.json({ success: false, error: "Not enough spots available" }, { status: 400 });
-      }
     }
 
     const basePrice = (tourDate?.specialPrice || tour.price) * numberOfGuests;
@@ -153,7 +151,7 @@ export async function POST(request: Request) {
           discountAmount,
           finalPrice,
           currency: tour.currency,
-          status: "PENDING",
+          status: BookingStatus.PENDING,
           guestName: guestName ? sanitizeInput(guestName) : null,
           guestEmail: guestEmail ? sanitizeInput(guestEmail) : null,
           guestPhone: guestPhone ? sanitizeInput(guestPhone) : null,

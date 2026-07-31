@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { TourStatus } from "@/generated/prisma/client";
 
 const BASE_URL = "https://visitiran.com";
 
@@ -21,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const [tours, articles] = await Promise.all([
       prisma.tour.findMany({
-        where: { status: "PUBLISHED", isArchived: false },
+        where: { status: TourStatus.PUBLISHED, isArchived: false },
         select: { slug: true, updatedAt: true, isFeatured: true },
       }),
       prisma.article.findMany({

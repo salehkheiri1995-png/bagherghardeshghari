@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { Role } from "@/generated/prisma/client";
 import { hashPassword, generateToken } from "@/lib/auth";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { validateEmail, validatePassword, validateName, sanitizeInput } from "@/lib/validation";
@@ -71,11 +72,11 @@ export async function POST(request: Request) {
         password: hashedPassword,
         country: country ? sanitizeInput(country) : null,
         phone: phone ? sanitizeInput(phone) : null,
-        role: "USER",
+        role: Role.USER,
       },
     });
 
-    const token = generateToken({
+    const token = await generateToken({
       userId: user.id,
       email: user.email,
       role: user.role,

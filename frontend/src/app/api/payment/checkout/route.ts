@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { extractUserFromRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { BookingStatus } from "@/generated/prisma/client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
       await prisma.booking.update({
         where: { id: bookingId },
         data: {
-          status: "CONFIRMED",
+          status: BookingStatus.CONFIRMED,
           confirmedAt: new Date(),
           paymentMethod: "manual",
         },

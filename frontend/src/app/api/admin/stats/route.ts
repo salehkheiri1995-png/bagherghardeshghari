@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
+import { TourStatus, BookingStatus } from "@/generated/prisma/client";
 
 export async function GET(request: Request) {
   try {
@@ -13,10 +14,10 @@ export async function GET(request: Request) {
       totalUsers, totalTours, totalBookings, totalRevenue, recentBookings, tourStats,
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.tour.count({ where: { status: "PUBLISHED" } }),
+      prisma.tour.count({ where: { status: TourStatus.PUBLISHED } }),
       prisma.booking.count(),
       prisma.booking.aggregate({
-        where: { status: { in: ["PAID", "CONFIRMED", "COMPLETED"] } },
+        where: { status: { in: [BookingStatus.CONFIRMED, BookingStatus.COMPLETED] } },
         _sum: { finalPrice: true },
       }),
       prisma.booking.findMany({
@@ -28,7 +29,7 @@ export async function GET(request: Request) {
         },
       }),
       prisma.tour.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: TourStatus.PUBLISHED },
         orderBy: { totalBookings: "desc" },
         take: 5,
         select: { titleEn: true, totalBookings: true, price: true },

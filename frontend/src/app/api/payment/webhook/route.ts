@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prisma from "@/lib/prisma";
+import { BookingStatus } from "@/generated/prisma/client";
 import Stripe from "stripe";
 
 // لازم است تا Next.js body رو به صورت raw بخونه نه JSON پارس شده
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   if (!stripe) {
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
           await prisma.booking.update({
             where: { id: session.metadata.bookingId },
             data: {
-              status: "CONFIRMED",
+              status: BookingStatus.CONFIRMED,
               paymentId: (session.payment_intent as string) || session.id,
               paidAt: new Date(),
               confirmedAt: new Date(),
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
         if (session.metadata?.bookingId) {
           await prisma.booking.update({
             where: { id: session.metadata.bookingId },
-            data: { status: "CANCELLED" },
+            data: { status: BookingStatus.CANCELLED },
           });
           console.log(`⚠️  Booking ${session.metadata.bookingId} cancelled (session expired).`);
         }
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
         if (bookingId) {
           await prisma.booking.update({
             where: { id: bookingId },
-            data: { status: "FAILED" },
+            data: { status: BookingStatus.FAILED },
           });
           console.log(`❌ Booking ${bookingId} marked as FAILED.`);
         }

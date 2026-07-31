@@ -1,13 +1,34 @@
 // VisitIran - Complete Database Schema
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  GUIDE
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum TourStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  FAILED
 }
 
 // ==========================================
@@ -22,7 +43,7 @@ model User {
   country   String?
   phone     String?
   bio       String?
-  role      String   @default("USER") // USER, GUIDE, ADMIN, SUPER_ADMIN
+  role      Role     @default(USER)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -106,7 +127,7 @@ model Tour {
   requirementsFa String?
   itinerary     String   @default("[]")
   itineraryFa   String?
-  status        String   @default("PUBLISHED")
+  status        TourStatus   @default(PUBLISHED)
   isFeatured    Boolean  @default(false)
   isArchived    Boolean  @default(false)
   averageRating Float   @default(0)
@@ -225,7 +246,7 @@ model Booking {
   discountAmount        Float    @default(0)
   finalPrice            Float
   currency              String   @default("USD")
-  status                String   @default("PENDING")
+  status                BookingStatus   @default(PENDING)
   paymentMethod         String?
   paymentId             String?
   stripeSessionId       String?

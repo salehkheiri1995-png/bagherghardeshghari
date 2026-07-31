@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import TourDetailClient from "@/components/tour/TourDetailClient";
 import { prisma } from "@/lib/prisma";
+import { TourStatus } from "@/generated/prisma/client";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -77,7 +78,7 @@ export async function generateMetadata(
 export async function generateStaticParams() {
   try {
     const tours = await prisma.tour.findMany({
-      where: { status: "PUBLISHED", isArchived: false },
+      where: { status: TourStatus.PUBLISHED, isArchived: false },
       select: { slug: true },
     });
     return tours.map((t) => ({ slug: t.slug }));

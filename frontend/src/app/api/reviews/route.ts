@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { extractUserFromRequest } from "@/lib/auth";
+import { BookingStatus } from "@/generated/prisma/client";
 
 // GET reviews for a tour
 export async function GET(request: Request) {
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
       where: {
         userId: authUser.userId,
         tourId,
-        status: "COMPLETED",
+        status: BookingStatus.COMPLETED,
       },
     });
 
