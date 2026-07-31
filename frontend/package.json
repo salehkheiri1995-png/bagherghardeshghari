@@ -12,7 +12,9 @@
     "db:push": "npx prisma db push",
     "db:seed": "npx prisma db seed",
     "db:studio": "npx prisma studio",
-    "db:generate": "npx prisma generate"
+    "db:generate": "npx prisma generate",
+    "test": "npx playwright test",
+    "test:race": "npx playwright test tests/race-condition.spec.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

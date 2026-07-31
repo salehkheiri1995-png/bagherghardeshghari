@@ -123,6 +123,10 @@ export async function POST(request: Request) {
     const booking = await prisma.$transaction(async (tx) => {
       const client = tx as typeof prisma;
       if (tourDateId) {
+        // Atomic spot reservation: `updateMany` with `gte` condition ensures that
+        // if availableSpots < numberOfGuests, the update affects 0 rows and throws.
+        // This prevents race conditions where two concurrent requests could both
+        // read availableSpots=2, each try to book 2, and both succeed (overbooking).
         const spotResult = await client.tourDate.updateMany({
           where: { id: tourDateId, availableSpots: { gte: numberOfGuests } },
           data: { availableSpots: { decrement: numberOfGuests } },
@@ -196,7 +200,7 @@ export async function POST(request: Request) {
     }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "NOT_ENOUGH_SPOTS") {
-      return NextResponse.json({ success: false, error: "Not enough spots available" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Not enough spots available" }, { status: 409 });
     }
     console.error("Create booking error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
